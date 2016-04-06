@@ -1,0 +1,56 @@
+{% extends "ElectionBundle:Default:design.html.twig" %}
+
+{% block body %}
+    <div class="col-md-6">
+        {% if town is null %}
+            <p>Désolé, aucune commune n'a été trouvée.</p>
+        {% else %}
+            <h3>{{ town.name }} ({% if town.department.code != '99' %}{{ town.department.code }}, {% endif %}{{ town.department.name }})</h3>
+            {% for result in results %}
+                <h4>{{ result.electionRound.election.name }} ({% if result.electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour)</h4>
+
+                <table class="table">
+                    <tr>
+                        <td>Inscrits</td>
+                        <td>{{ result.registered|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Votants</td>
+                        <td>{{ result.voters|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Participation</td>
+                        <td><strong>{{ (result.voters*100/result.registered)|number_format(2, null, " ") }} %</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Votes blancs et nuls</td>
+                        <td>{{ result.blankAndInvalidVotes|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Suffrages exprimés</td>
+                        <td>{{ result.votesCast|number_format(null, null, " ") }}</td>
+                    </tr>
+                </table>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Candidat(e)</td>
+                        <td>Voix</td>
+                        <td>Pourcentage</td>
+                    </tr>
+                    </thead>
+                    {% for score in result.scores %}
+                        <tr>
+                            <td>{{ score.candidate.firstname }} {{ score.candidate.lastname }}</td>
+                            <td>{{ score.voices|number_format(null, null, " ") }}</td>
+                            <td>
+                                {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }} %
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

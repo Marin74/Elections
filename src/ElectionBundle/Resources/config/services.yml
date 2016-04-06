@@ -1,0 +1,4 @@
+services:
+#    election.example:
+#        class: ElectionBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

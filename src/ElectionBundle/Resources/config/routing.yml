@@ -1,0 +1,18 @@
+election_homepage:
+    path:     /
+    defaults: { _controller: ElectionBundle:Default:index }
+election_search:
+    path:     /recherche
+    defaults: { _controller: ElectionBundle:Default:search }
+election_elections:
+    path:     /elections
+    defaults: { _controller: ElectionBundle:Default:elections }
+election_election:
+    path:     /election/{id}
+    defaults: { _controller: ElectionBundle:Default:election }
+election_department:
+    path:     /election/{id}/departement/{code}
+    defaults: { _controller: ElectionBundle:Default:department }
+election_town:
+    path:     /election/{id}/ville/{code}
+    defaults: { _controller: ElectionBundle:Default:town }

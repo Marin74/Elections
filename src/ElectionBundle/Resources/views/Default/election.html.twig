@@ -1,0 +1,181 @@
+{% extends "ElectionBundle:Default:design.html.twig" %}
+
+{% block body %}
+    <div class="col-md-6">
+        {% if election is null %}
+            <p>Désolé, aucune élection n'a été trouvée.</p>
+        {% else %}
+            <h3>{{ election.name }}</h3>
+            {% for electionRound in election.electionRounds %}
+                <h4>{% if electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>
+
+                <table class="table">
+                    <tr>
+                        <td>Inscrits</td>
+                        <td>{{ electionRound.registered|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Votants</td>
+                        <td>{{ electionRound.voters|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Participation</td>
+                        <td><strong>{% if electionRound.registered == 0 %}0{% else %}{{ (electionRound.voters*100/electionRound.registered)|number_format(2, null, " ") }}{% endif %} %</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Votes blancs et nuls</td>
+                        <td>{{ electionRound.blankAndInvalidVotes|number_format(null, null, " ") }}</td>
+                    </tr>
+                    <tr>
+                        <td>Suffrages exprimés</td>
+                        <td>{{ electionRound.votesCast|number_format(null, null, " ") }}</td>
+                    </tr>
+                </table>
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <td>Candidat(e)</td>
+                        <td>Voix</td>
+                        <td>Pourcentage</td>
+                    </tr>
+                    </thead>
+                    {% if electionRound.scores.count != 0 %}
+                        {% for score in electionRound.scores %}
+                            {% set strong = false %}
+                            {% set hint = "" %}
+                            {% if election.type == constant("ElectionBundle\\Entity\\Election::TYPE_PRESIDENTIAL") %}
+                                {% if electionRound.number == 1 and loop.index <= 2 %}
+                                    {% set strong = true %}
+                                    {% if (score.voices*100/electionRound.votesCast) > 50 %}
+                                        {% set hint = "(élu)" %}
+                                    {% else %}
+                                        {% set hint = " (second tour)" %}
+                                    {% endif %}
+                                {% elseif electionRound.number == 2 and loop.index == 1 %}
+                                    {% set strong = true %}
+                                    {% set hint = " (élu)" %}
+                                {% endif %}
+                            {% endif %}
+                            <tr>
+                                <td>
+                                    {% if strong %}<strong>{% endif %}
+                                    {{ score.candidate.name }}
+                                    {% if strong %}</strong>{% endif %}
+                                </td>
+                                <td>
+                                    {% if strong %}<strong>{% endif %}
+                                    {{ score.voices|number_format(null, null, " ") }}
+                                    {% if strong %}</strong>{% endif %}
+                                </td>
+                                <td>
+                                    {% if strong %}<strong>{% endif %}
+                                    {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }} %
+                                     {{ hint }}
+                                    {% if strong %}</strong>{% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        {% for candidate in electionRound.candidates %}
+                            <tr>
+                                <td>{{ candidate.name }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {% if election is not null and election.electionRounds.count > 0 %}
+            <div id="chartRound1" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        {% endif %}
+   </div>
+    <div class="col-md-6">
+        {% if election is not null and election.electionRounds.count > 1 %}
+            <div id="chartRound2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        {% endif %}
+    </div>
+{% endblock %}
+{% block js %}
+    {% if election is not null %}
+        {% for electionRound in election.electionRounds %}
+        $(function () {
+        // Create the chart
+        $('#chartRound{{ loop.index }}').highcharts({
+        chart: {
+        type: 'pie'
+        },
+        title: {
+        text: 'Résultats'
+        },
+        subtitle: {
+        text: '{% if loop.index == 1 %}1er{% else %}{{ loop.index }}ème{% endif %} tour'
+        },
+        plotOptions: {
+        series: {
+        dataLabels: {
+        enabled: true,
+        format: '{point.name}: {point.y:.1f} %'
+        }
+        }
+        },
+
+        tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/>'
+        },
+        series: [{
+        name: 'Candidats',
+        colorByPoint: true,
+        data: [
+
+        {% set resultMin = 5 %}
+        {% set smallCandidates = 0 %}
+
+        {% for score in electionRound.scores %}
+            {% if (score.voices*100/electionRound.votesCast) >= resultMin %}
+                {
+                name: '{{ score.candidate.firstname  }} {{ score.candidate.lastname  }}',
+                y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
+                drilldown: null
+                },
+            {% else %}
+                {% set smallCandidates = smallCandidates + (score.voices*100/electionRound.votesCast) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if smallCandidates != 0 %}
+            {
+            name: 'Autres candidats',
+            y: {{ smallCandidates|number_format(2, null, " ") }},
+            drilldown: 'other'
+            },
+        {% endif %}
+        ]
+        }],
+        drilldown: {
+        series: [
+        {% if smallCandidates != 0 %}
+                    {
+                        name: 'Autres candidats',
+                        id: 'other',
+                        data: [
+                            {% for score in electionRound.scores %}
+                                {% if (score.voices*100/electionRound.votesCast) < resultMin %}
+                                    ['{{ score.candidate.name }}', {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }}],
+                                {% endif %}
+                            {% endfor %}
+                        ]
+                    },
+        {% endif %}
+        ]
+        }
+        });
+        });
+            {% endfor %}
+    {% endif %}
+{% endblock %}
