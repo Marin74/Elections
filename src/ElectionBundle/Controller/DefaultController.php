@@ -14,7 +14,7 @@ class DefaultController extends Controller
         $repoElectionRound = $entityManager->getRepository("ElectionBundle:ElectionRound");
         $repoResult = $entityManager->getRepository("ElectionBundle:Result");
 
-        $lastElectionRound = $repoElectionRound->findOneBy(array(), array("date" => "desc"));
+        $lastElectionRound = $repoElectionRound->findOneBy(array(), array("date" => "asc"));
 
         return $this->render('ElectionBundle:Default:index.html.twig', array(
             "mapResults" => $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound)),
@@ -88,7 +88,7 @@ class DefaultController extends Controller
                     $results[] = $result;
             }
 
-            $lastRound = $repoElectionRound->findOneBy(array(), array("date" => "desc"));
+            $lastRound = $repoElectionRound->findOneBy(array("election" => $election), array("date" => "desc"));
 
             $towns = $repoTown->findBy(array("department" => $department));
             foreach ($towns as $town) {

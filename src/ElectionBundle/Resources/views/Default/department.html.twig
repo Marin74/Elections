@@ -3,7 +3,10 @@
 {% block body %}
     <div class="col-md-6">
         {% if department is null %}
-            <p>Désolé, aucun département n'a été trouvé.</p>
+            <p>Désolé, aucun département.</p>
+        {% elseif results|length == 0 %}
+            <h3>{{ department.name }}{% if department.code != '99' %} ({{ department.code }}){% endif %}</h3>
+            <p>Désolé, aucun résultat n'a été trouvé pour cette élection.</p>
         {% else %}
             <h3>{{ department.name }}{% if department.code != '99' %} ({{ department.code }}){% endif %}</h3>
             {% for result in results %}
@@ -98,15 +101,20 @@
         {% endif %}
         {% set townCode = townCode ~ mapResult.town.code %}
 
-        if(props != null && props.code == '{{ townCode }}') {
-        name1 = '{{ mapResult.scores.first.candidate.name }}'
-        result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-        name2 = '{{ mapResult.scores[1].candidate.name }}'
-        result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-        department = "{{ mapResult.town.name }}"
+        {% if mapResult.scores|length > 0 %}
+            if(props != null && props.code == '{{ townCode }}') {
+            name1 = '{{ mapResult.scores.first.candidate.name }}'
+            result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
+            {% if mapResult.scores|length > 1 %}
+                name2 = '{{ mapResult.scores[1].candidate.name }}'
+                result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
+                department = "{{ mapResult.town.name }}"
+            {% endif %}
+        {% endif %}
         }
     {% endfor %}
 
+    {% if mapResults|length > 0 %}
     this._div.innerHTML = '<h4>{{ mapResults[0].electionRound.election.name }} {% if mapResults[0].electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>' +
     (department ? "<h5>" + department + "</h5>": "") +
     (props ?
@@ -114,6 +122,7 @@
     '<strong>' + name2 + '</strong><br />' + result2 + ' %'
     : 'Passez la souris sur la carte.');
     };
+    {% endif %}
 
     info.addTo(map);
     // TODO
@@ -137,7 +146,9 @@
         {% set townCode = townCode ~ mapResult.town.code %}
 
         if(d == '{{ townCode }}') {
-            return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
+            {% if mapResult.scores|length > 0 %}
+                return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
+            {% endif %}
         }
     {% endfor %}
     return 'blue';
@@ -194,9 +205,12 @@
 
     function zoomToFeature(e) {
     //map.fitBounds(e.target.getBounds());
+
+    {% if mapResults|length > 0 %}
     var whereToGo = "{{ path("election_town", {"id": mapResults[0].electionRound.election.id, "code": "XXX"}) }}";
     whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
     window.location.href = whereToGo;
+    {% endif %}
     }
 
     function onEachFeature(feature, layer) {
@@ -224,11 +238,13 @@
     labels = [];
 
     // loop through our density intervals and generate a label with a colored square for each interval
-    {% for candidate in mapResults[0].electionRound.candidates %}
-        div.innerHTML += '<i style="background:{{ candidate.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
+    {% if mapResults|length > 0 %}
+        {% for candidate in mapResults[0].electionRound.candidates %}
+            div.innerHTML += '<i style="background:{{ candidate.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
 
-        div.innerHTML += "{{ candidate.name }}<br>";
-    {% endfor %}
+            div.innerHTML += "{{ candidate.name }}<br>";
+        {% endfor %}
+    {% endif %}
 
     return div;
     };

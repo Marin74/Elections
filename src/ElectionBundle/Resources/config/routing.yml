@@ -1,3 +1,4 @@
+# Routes are in French but they can be modified
 election_homepage:
     path:     /
     defaults: { _controller: ElectionBundle:Default:index }

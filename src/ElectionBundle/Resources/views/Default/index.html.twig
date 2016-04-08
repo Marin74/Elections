@@ -72,11 +72,13 @@
     var department = ""
     {% for mapResult in mapResults %}
         if(props != null && (props.code == '{{ mapResult.department.code }}' || props.code == '0{{ mapResult.department.code }}')) {
-            name1 = '{{ mapResult.scores.first.candidate.name }}'
-            result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-            name2 = '{{ mapResult.scores[1].candidate.name }}'
-            result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-            department = "{{ mapResult.department.name }}"
+            {% if mapResult.scores|length > 0 %}
+                name1 = '{{ mapResult.scores.first.candidate.name }}'
+                result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
+                name2 = '{{ mapResult.scores[1].candidate.name }}'
+                result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
+                department = "{{ mapResult.department.name }}"
+            {% endif %}
         }
     {% endfor %}
 
@@ -102,7 +104,9 @@
 
         {% for mapResult in mapResults %}
             if(d == '{{ mapResult.department.code }}' || d == '0{{ mapResult.department.code }}') {
+            {% if mapResult.scores|length > 0 %}
                 return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
+            {% endif %}
             }
         {% endfor %}
         return 'blue';
