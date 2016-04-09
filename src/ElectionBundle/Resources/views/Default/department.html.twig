@@ -103,12 +103,19 @@
 
         {% if mapResult.scores|length > 0 %}
             if(props != null && props.code == '{{ townCode }}') {
-            name1 = '{{ mapResult.scores.first.candidate.name }}'
-            result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-            {% if mapResult.scores|length > 1 %}
-                name2 = '{{ mapResult.scores[1].candidate.name }}'
-                result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }}"
-                department = "{{ mapResult.town.name }}"
+            department = "{{ mapResult.town.name }}"
+            {% if mapResult.votesCast == 0 %}
+                name1 = "Pas de voix exprimées."
+                name2 = ""
+                result1 = ""
+                result2 = ""
+            {% else %}
+                name1 = '{{ mapResult.scores.first.candidate.name }}'
+                result1 = "{{ (mapResult.scores.first.voices*100/mapResult.votesCast)|number_format(2, null, " ") }} %"
+                {% if mapResult.scores|length > 1 %}
+                    name2 = '{{ mapResult.scores[1].candidate.name }}'
+                    result2 = "{{ (mapResult.scores[1].voices*100/mapResult.votesCast)|number_format(2, null, " ") }} %"
+                {% endif %}
             {% endif %}
         {% endif %}
         }
@@ -118,8 +125,8 @@
     this._div.innerHTML = '<h4>{{ mapResults[0].electionRound.election.name }} {% if mapResults[0].electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>' +
     (department ? "<h5>" + department + "</h5>": "") +
     (props ?
-    '<strong>' + name1 + '</strong><br />' + result1 + ' %<br />' +
-    '<strong>' + name2 + '</strong><br />' + result2 + ' %'
+    '<strong>' + name1 + '</strong><br />' + result1 + '<br />' +
+    '<strong>' + name2 + '</strong><br />' + result2
     : 'Passez la souris sur la carte.');
     };
     {% endif %}
@@ -146,12 +153,12 @@
         {% set townCode = townCode ~ mapResult.town.code %}
 
         if(d == '{{ townCode }}') {
-            {% if mapResult.scores|length > 0 %}
+            {% if mapResult.scores|length > 0 and mapResult.votesCast > 0 %}
                 return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
             {% endif %}
         }
     {% endfor %}
-    return 'blue';
+    return 'white';
 
     /*return d > 100 ? '#800026' :
     d > 90  ? '#BD0026' :
