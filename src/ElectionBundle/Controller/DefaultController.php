@@ -16,8 +16,31 @@ class DefaultController extends Controller
 
         $lastElectionRound = $repoElectionRound->findOneBy(array(), array("date" => "asc"));
 
+        $mapResults = $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound));
+
+        // Get candidates who arrive first in an area
+        $mapCandidatesList = array();
+
+        foreach($mapResults as $mapResult) {
+            $bestScore = null;
+            foreach($mapResult->getScores() as $score) {
+                if($bestScore == null || $score->getVoices() > $bestScore->getVoices())
+                    $bestScore = $score;
+            }
+
+            $exists = false;
+            foreach($mapCandidatesList as $candidate) {
+                if($candidate->getId() == $bestScore->getCandidate()->getId())
+                    $exists = true;
+            }
+
+            if(!$exists)
+                $mapCandidatesList[] = $bestScore->getCandidate();
+        }
+
         return $this->render('ElectionBundle:Default:index.html.twig', array(
-            "mapResults" => $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound)),
+            "mapResults" => $mapResults,
+            "mapCandidatesList" => $mapCandidatesList,
         ));
     }
 
@@ -41,6 +64,7 @@ class DefaultController extends Controller
         $department = $repoDepartment->findOneBy(array("name" => $search));
 
         if($department != null)
+            return $this->redirect($this->generateUrl('election_department', array("id" => $election->getId(), "code" => $department->getCode())));
 
         return $this->render('ElectionBundle:Default:search.html.twig');
     }
@@ -76,6 +100,7 @@ class DefaultController extends Controller
 
         $results = array();// Get results of the election for the selected department
         $mapResults = array();// Get results of the towns
+        $mapCandidatesList = array();// Get candidates who arrive first once in an area
 
         $election = $repoElection->find($id);
         $department = $repoDepartment->findOneBy(array("code" => $code));
@@ -97,12 +122,30 @@ class DefaultController extends Controller
                         $mapResults[] = $tempResult;
                 }
             }
+
+            foreach($mapResults as $mapResult) {
+                $bestScore = null;
+                foreach($mapResult->getScores() as $score) {
+                    if($bestScore == null || $score->getVoices() > $bestScore->getVoices())
+                        $bestScore = $score;
+                }
+
+                $exists = false;
+                foreach($mapCandidatesList as $candidate) {
+                    if($candidate->getId() == $bestScore->getCandidate()->getId())
+                        $exists = true;
+                }
+
+                if(!$exists)
+                    $mapCandidatesList[] = $bestScore->getCandidate();
+            }
         }
 
         return $this->render('ElectionBundle:Default:department.html.twig', array(
             "department" => $department,
             "results" => $results,
             "mapResults" => $mapResults,
+            "mapCandidatesList" => $mapCandidatesList,
         ));
     }
 

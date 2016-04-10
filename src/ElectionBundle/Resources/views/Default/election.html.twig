@@ -103,85 +103,85 @@
 {% block js %}
     {% if election is not null %}
         {% for electionRound in election.electionRounds %}
-        $(function () {
-        // Create the chart
-        $('#chartRound{{ loop.index }}').highcharts({
-        chart: {
-        type: 'pie'
-        },
-        title: {
-        text: 'Résultats'
-        },
-        subtitle: {
-        text: '{% if loop.index == 1 %}1er{% else %}{{ loop.index }}ème{% endif %} tour'
-        },
-        plotOptions: {
-        series: {
-        dataLabels: {
-        enabled: true,
-        format: '{point.name} : {point.y:.1f} %'
-        }
-        }
-        },
+            $(function () {
+                // Create the chart
+                $('#chartRound{{ loop.index }}').highcharts({
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Résultats'
+                    },
+                    subtitle: {
+                        text: '{% if loop.index == 1 %}1er{% else %}{{ loop.index }}ème{% endif %} tour'
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.name} : {point.y:.1f} %'
+                            }
+                        }
+                    },
 
-        tooltip: {
-        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/>'
-        },
-        series: [{
-        name: 'Candidats',
-        colorByPoint: true,
-        data: [
-
-        {% set resultMin = 5 %}
-        {% set smallCandidates = 0 %}
-
-        {% for score in electionRound.scores %}
-            {% if (score.voices*100/electionRound.votesCast) >= resultMin %}
-                {
-                color: '{{ score.candidate.politicalNuance.color }}',
-                name: '{{ score.candidate.firstname  }} {{ score.candidate.lastname  }}',
-                y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
-                drilldown: null
-                },
-            {% else %}
-                {% set smallCandidates = smallCandidates + (score.voices*100/electionRound.votesCast) %}
-            {% endif %}
-        {% endfor %}
-
-        {% if smallCandidates != 0 %}
-            {
-            name: 'Autres candidats',
-            y: {{ smallCandidates|number_format(2, null, " ") }},
-            drilldown: 'other'
-            },
-        {% endif %}
-        ]
-        }],
-        drilldown: {
-        series: [
-        {% if smallCandidates != 0 %}
-                    {
-                        name: 'Autres candidats',
-                        id: 'other',
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/>'
+                    },
+                    series: [{
+                        name: 'Candidats',
+                        colorByPoint: true,
                         data: [
+
+                            {% set resultMin = 5 %}
+                            {% set smallCandidates = 0 %}
+
                             {% for score in electionRound.scores %}
-                                {% if (score.voices*100/electionRound.votesCast) < resultMin %}
+                                {% if (score.voices*100/electionRound.votesCast) >= resultMin %}
                                     {
-                                    color: '{{ score.candidate.politicalNuance.color }}',
-                                    name: '{{ score.candidate.name }}',
-                                    y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
-                                    drilldown: null
+                                        color: '{{ score.candidate.politicalNuance.color }}',
+                                        name: '{{ score.candidate.firstname  }} {{ score.candidate.lastname  }}',
+                                        y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
+                                        drilldown: null
                                     },
+                                {% else %}
+                                    {% set smallCandidates = smallCandidates + (score.voices*100/electionRound.votesCast) %}
                                 {% endif %}
                             {% endfor %}
+
+                            {% if smallCandidates != 0 %}
+                                {
+                                    name: 'Autres candidats',
+                                    y: {{ smallCandidates|number_format(2, null, " ") }},
+                                    drilldown: 'other'
+                                },
+                            {% endif %}
                         ]
-                    },
-        {% endif %}
-        ]
-        }
-        });
-        });
-            {% endfor %}
+                    }],
+                    drilldown: {
+                        series: [
+                            {% if smallCandidates != 0 %}
+                                {
+                                    name: 'Autres candidats',
+                                    id: 'other',
+                                    data: [
+                                        {% for score in electionRound.scores %}
+                                            {% if (score.voices*100/electionRound.votesCast) < resultMin %}
+                                                {
+                                                color: '{{ score.candidate.politicalNuance.color }}',
+                                                name: '{{ score.candidate.name }}',
+                                                y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
+                                                drilldown: null
+                                                },
+                                            {% endif %}
+                                        {% endfor %}
+                                    ]
+                                },
+                            {% endif %}
+                        ]
+                    }
+                });
+            });
+        {% endfor %}
     {% endif %}
 {% endblock %}
