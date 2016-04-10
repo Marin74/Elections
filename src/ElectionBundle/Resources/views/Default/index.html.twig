@@ -76,7 +76,11 @@
         {% for mapResult in mapResults %}
             if(d == '{{ mapResult.department.code }}' || d == '0{{ mapResult.department.code }}') {
                 {% if mapResult.scores|length > 0 %}
-                    return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
+                    {% for candidacy in mapCandidacies %}
+                            {% if candidacy.candidate.id == mapResult.scores.first.candidate.id %}
+                                return '{{ candidacy.politicalNuance.color }}';
+                            {% endif %}
+                    {% endfor %}
                 {% endif %}
             }
         {% endfor %}
@@ -148,10 +152,10 @@
         labels = [];
 
         // loop through our density intervals and generate a label with a colored square for each interval
-        {% for candidate in mapCandidatesList %}
-            div.innerHTML += '<i style="background:{{ candidate.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
+        {% for candidacy in mapCandidacies %}
+            div.innerHTML += '<i style="background:{{ candidacy.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
 
-            div.innerHTML += "{{ candidate.name }}<br>";
+            div.innerHTML += "{{ candidacy.candidate.name }}<br>";
         {% endfor %}
 
         return div;

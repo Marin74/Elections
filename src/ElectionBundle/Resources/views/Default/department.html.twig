@@ -154,8 +154,12 @@
                 {% set townCode = townCode ~ mapResult.town.code %}
 
                 if(d == '{{ townCode }}') {
-                    {% if mapResult.scores|length > 0 and mapResult.votesCast > 0 %}
-                        return '{{ mapResult.scores.first.candidate.politicalNuance.color }}';
+                    {% if mapResult.scores|length > 0 %}
+                        {% for candidacy in mapCandidacies %}
+                            {% if candidacy.candidate.id == mapResult.scores.first.candidate.id %}
+                                return '{{ candidacy.politicalNuance.color }}';
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
                 }
             {% endfor %}
@@ -228,10 +232,10 @@
 
             // loop through our density intervals and generate a label with a colored square for each interval
             {% if mapResults|length > 0 %}
-                {% for candidate in mapCandidatesList %}
-                    div.innerHTML += '<i style="background:{{ candidate.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
+                {% for candidacy in mapCandidacies %}
+                    div.innerHTML += '<i style="background:{{ candidacy.politicalNuance.color }}">&nbsp;&nbsp;&nbsp;&nbsp;</i>&nbsp;';
 
-                    div.innerHTML += "{{ candidate.name }}<br>";
+                    div.innerHTML += "{{ candidacy.candidate.name }}<br>";
                 {% endfor %}
             {% endif %}
 

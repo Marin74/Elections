@@ -19,28 +19,34 @@ class DefaultController extends Controller
         $mapResults = $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound));
 
         // Get candidates who arrive first in an area
-        $mapCandidatesList = array();
+        $mapCandidacies = array();
 
         foreach($mapResults as $mapResult) {
-            $bestScore = null;
-            foreach($mapResult->getScores() as $score) {
-                if($bestScore == null || $score->getVoices() > $bestScore->getVoices())
-                    $bestScore = $score;
-            }
 
-            $exists = false;
-            foreach($mapCandidatesList as $candidate) {
-                if($candidate->getId() == $bestScore->getCandidate()->getId())
-                    $exists = true;
-            }
+            if($mapResult->getScores()->count() > 0) {
+                $exists = false;
+                foreach ($mapCandidacies as $candidacy) {
+                    if ($candidacy->getCandidate()->getId() == $mapResult->getScores()->first()->getCandidate()->getId())
+                        $exists = true;
+                }
 
-            if(!$exists)
-                $mapCandidatesList[] = $bestScore->getCandidate();
+                if (!$exists) {
+
+                    $candidacy = null;
+                    foreach ($lastElectionRound->getCandidacies() as $tempCandidacy) {
+                        if ($tempCandidacy->getCandidate()->getId() == $mapResult->getScores()->first()->getCandidate()->getId())
+                            $candidacy = $tempCandidacy;
+                    }
+
+                    if ($candidacy != null)
+                        $mapCandidacies[] = $candidacy;
+                }
+            }
         }
 
         return $this->render('ElectionBundle:Default:index.html.twig', array(
             "mapResults" => $mapResults,
-            "mapCandidatesList" => $mapCandidatesList,
+            "mapCandidacies" => $mapCandidacies,
         ));
     }
 
@@ -100,7 +106,7 @@ class DefaultController extends Controller
 
         $results = array();// Get results of the election for the selected department
         $mapResults = array();// Get results of the towns
-        $mapCandidatesList = array();// Get candidates who arrive first once in an area
+        $mapCandidacies = array();// Get candidates who arrive first once in an area
 
         $election = $repoElection->find($id);
         $department = $repoDepartment->findOneBy(array("code" => $code));
@@ -124,20 +130,26 @@ class DefaultController extends Controller
             }
 
             foreach($mapResults as $mapResult) {
-                $bestScore = null;
-                foreach($mapResult->getScores() as $score) {
-                    if($bestScore == null || $score->getVoices() > $bestScore->getVoices())
-                        $bestScore = $score;
-                }
 
-                $exists = false;
-                foreach($mapCandidatesList as $candidate) {
-                    if($candidate->getId() == $bestScore->getCandidate()->getId())
-                        $exists = true;
-                }
+                if($mapResult->getScores()->count() > 0) {
+                    $exists = false;
+                    foreach ($mapCandidacies as $candidacy) {
+                        if ($candidacy->getCandidate()->getId() == $mapResult->getScores()->first()->getCandidate()->getId())
+                            $exists = true;
+                    }
 
-                if(!$exists)
-                    $mapCandidatesList[] = $bestScore->getCandidate();
+                    if (!$exists) {
+
+                        $candidacy = null;
+                        foreach ($lastRound->getCandidacies() as $tempCandidacy) {
+                            if ($tempCandidacy->getCandidate()->getId() == $mapResult->getScores()->first()->getCandidate()->getId())
+                                $candidacy = $tempCandidacy;
+                        }
+
+                        if ($candidacy != null)
+                            $mapCandidacies[] = $candidacy;
+                    }
+                }
             }
         }
 
@@ -145,7 +157,7 @@ class DefaultController extends Controller
             "department" => $department,
             "results" => $results,
             "mapResults" => $mapResults,
-            "mapCandidatesList" => $mapCandidatesList,
+            "mapCandidacies" => $mapCandidacies,
         ));
     }
 

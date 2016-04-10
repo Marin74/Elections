@@ -54,6 +54,11 @@ class ElectionRound
     private $candidates;
 
     /**
+     * @ORM\OneToMany(targetEntity="ElectionBundle\Entity\Candidacy",mappedBy="electionRound")
+     */
+    private $candidacies;
+
+    /**
      * @ORM\OneToMany(targetEntity="ElectionBundle\Entity\Result",mappedBy="electionRound")
      */
     private $results;
@@ -102,6 +107,7 @@ class ElectionRound
 
     public function __construct() {
         $this->candidates = new ArrayCollection();
+        $this->candidacies = new ArrayCollection();
         $this->results = new ArrayCollection();
         $this->scores = new ArrayCollection();
     }
@@ -221,6 +227,16 @@ class ElectionRound
     public function getCandidates()
     {
         return $this->candidates;
+    }
+
+    /**
+     * Get candidacies
+     *
+     * @return ArrayCollection
+     */
+    public function getCandidacies()
+    {
+        return $this->candidacies;
     }
 
     /**

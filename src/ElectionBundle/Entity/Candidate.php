@@ -37,20 +37,21 @@ class Candidate
     private $lastname;
 
     /**
-     * @ORM\ManyToOne(targetEntity="ElectionBundle\Entity\PoliticalNuance",inversedBy="candidatePoliticalNuances")
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     */
-    private $politicalNuance;
-
-    /**
      * @ORM\ManyToMany(targetEntity="ElectionBundle\Entity\ElectionRound",mappedBy="candidates")
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $electionRounds;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="ElectionBundle\Entity\Candidacy",mappedBy="candidate")
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $candidacies;
+
 
     public function __construct() {
         $this->electionRounds = new ArrayCollection();
+        $this->candidacies = new ArrayCollection();
     }
 
 
@@ -123,30 +124,6 @@ class Candidate
     }
 
     /**
-     * Set politicalNuance
-     *
-     * @param PoliticalNuance $politicalNuance
-     *
-     * @return Candidate
-     */
-    public function setPoliticalNuance(PoliticalNuance $politicalNuance)
-    {
-        $this->politicalNuance = $politicalNuance;
-
-        return $this;
-    }
-
-    /**
-     * Get politicalNuance
-     *
-     * @return PoliticalNuance
-     */
-    public function getPoliticalNuance()
-    {
-        return $this->politicalNuance;
-    }
-
-    /**
      * Get electionRounds
      *
      * @return ArrayCollection
@@ -154,6 +131,16 @@ class Candidate
     public function getElectionRounds()
     {
         return $this->electionRounds;
+    }
+
+    /**
+     * Get candidacies
+     *
+     * @return ArrayCollection
+     */
+    public function getCandidacies()
+    {
+        return $this->candidacies;
     }
 }
 
