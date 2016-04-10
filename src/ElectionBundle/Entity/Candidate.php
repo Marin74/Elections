@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Candidate
 {
+    const GENDER_MALE = "M";
+    const GENDER_FEMALE = "F";
+
     /**
      * @var int
      *
@@ -37,10 +40,11 @@ class Candidate
     private $lastname;
 
     /**
-     * @ORM\ManyToMany(targetEntity="ElectionBundle\Entity\ElectionRound",mappedBy="candidates")
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @var string
+     *
+     * @ORM\Column(name="gender", type="string", length=1)
      */
-    private $electionRounds;
+    private $gender;
 
     /**
      * @ORM\ManyToMany(targetEntity="ElectionBundle\Entity\Candidacy",mappedBy="candidate")
@@ -50,7 +54,6 @@ class Candidate
 
 
     public function __construct() {
-        $this->electionRounds = new ArrayCollection();
         $this->candidacies = new ArrayCollection();
     }
 
@@ -124,13 +127,47 @@ class Candidate
     }
 
     /**
-     * Get electionRounds
+     * Set gender
      *
-     * @return ArrayCollection
+     * @return Candidate
      */
-    public function getElectionRounds()
+    public function setMale()
     {
-        return $this->electionRounds;
+        $this->gender = Candidate::GENDER_MALE;
+
+        return $this;
+    }
+
+    /**
+     * Set gender
+     *
+     * @return Candidate
+     */
+    public function setFemale()
+    {
+        $this->gender = Candidate::GENDER_FEMALE;
+
+        return $this;
+    }
+
+    /**
+     * Get isMale
+     *
+     * @return boolean
+     */
+    public function isMale()
+    {
+        return $this->gender == Candidate::GENDER_MALE;
+    }
+
+    /**
+     * Get isFemale
+     *
+     * @return boolean
+     */
+    public function isFemale()
+    {
+        return $this->gender == Candidate::GENDER_FEMALE;
     }
 
     /**

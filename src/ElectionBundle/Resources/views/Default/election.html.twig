@@ -48,7 +48,11 @@
                                 {% if electionRound.number == 1 and loop.index <= 2 %}
                                     {% set strong = true %}
                                     {% if (score.voices*100/electionRound.votesCast) > 50 %}
-                                        {% set hint = "(élu)" %}
+                                        {% if score.candidate.isMale %}
+                                            {% set hint = "(élu)" %}
+                                        {% else %}
+                                            {% set hint = "(élue)" %}
+                                        {% endif %}
                                     {% else %}
                                         {% set hint = " (second tour)" %}
                                     {% endif %}
@@ -60,26 +64,26 @@
                             <tr>
                                 <td>
                                     {% if strong %}<strong>{% endif %}
-                                    {{ score.candidate.name }}
+                                        {{ score.candidate.name }}
                                     {% if strong %}</strong>{% endif %}
                                 </td>
                                 <td>
                                     {% if strong %}<strong>{% endif %}
-                                    {{ score.voices|number_format(null, null, " ") }}
+                                        {{ score.voices|number_format(null, null, " ") }}
                                     {% if strong %}</strong>{% endif %}
                                 </td>
                                 <td>
                                     {% if strong %}<strong>{% endif %}
-                                    {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }} %
-                                     {{ hint }}
+                                        {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }} %
+                                        {{ hint }}
                                     {% if strong %}</strong>{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
                     {% else %}
-                        {% for candidate in electionRound.candidates %}
+                        {% for candidacy in electionRound.candidacies %}
                             <tr>
-                                <td>{{ candidate.name }}</td>
+                                <td>{{ candidacy.candidate.name }}</td>
                                 <td></td>
                                 <td></td>
                             </tr>

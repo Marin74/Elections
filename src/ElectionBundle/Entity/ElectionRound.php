@@ -44,16 +44,6 @@ class ElectionRound
     private $election;
 
     /**
-     * @ORM\ManyToMany(targetEntity="ElectionBundle\Entity\Candidate", cascade={"persist"})
-     * @ORM\JoinTable(name="candidates_to_a_round",
-     *      joinColumns={@ORM\JoinColumn(name="electionRound_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="candidate_id", referencedColumnName="id")}
-     *      )
-     * @ORM\OrderBy({"lastname" = "asc"})
-     **/
-    private $candidates;
-
-    /**
      * @ORM\OneToMany(targetEntity="ElectionBundle\Entity\Candidacy",mappedBy="electionRound")
      */
     private $candidacies;
@@ -106,7 +96,6 @@ class ElectionRound
 
 
     public function __construct() {
-        $this->candidates = new ArrayCollection();
         $this->candidacies = new ArrayCollection();
         $this->results = new ArrayCollection();
         $this->scores = new ArrayCollection();
@@ -193,40 +182,6 @@ class ElectionRound
     public function getElection()
     {
         return $this->election;
-    }
-
-    /**
-     * Add candidate
-     *
-     * @param Candidate $candidate
-     * @return Election
-     */
-    public function addCandidate(Candidate $candidate)
-    {
-        // Check if it already exists
-        $exists = false;
-        foreach($this->candidates as $temp) {
-
-            if($temp->getId() == $candidate->getId()) {
-                $exists = true;
-                break;
-            }
-        }
-
-        if(!$exists)
-            $this->candidates[] = $candidate;
-
-        return $this;
-    }
-
-    /**
-     * Get candidates
-     *
-     * @return ArrayCollection
-     */
-    public function getCandidates()
-    {
-        return $this->candidates;
     }
 
     /**

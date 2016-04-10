@@ -4,6 +4,9 @@
     <div class="col-md-6">
         {% if town is null %}
             <p>Désolé, aucune commune n'a été trouvée.</p>
+        {% elseif results|length == 0 %}
+            <h3>{{ department.name }}{% if department.code != '99' %} ({{ department.code }}){% endif %}</h3>
+            <p>Désolé, aucun résultat n'a été trouvé pour cette élection.</p>
         {% else %}
             <h3>{{ town.name }} ({% if town.department.code != '99' %}{{ town.department.code }}, {% endif %}{{ town.department.name }})</h3>
             {% for result in results %}

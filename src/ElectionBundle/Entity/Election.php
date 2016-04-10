@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Election
 {
-    const TYPE_PRESIDENTIAL = 1;// Presidential elect
+    const TYPE_PRESIDENTIAL = 1;// Presidential election
 
 
     /**
