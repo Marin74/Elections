@@ -139,7 +139,12 @@
                             {% for score in electionRound.scores %}
                                 {% if (score.voices*100/electionRound.votesCast) >= resultMin %}
                                     {
-                                        color: '{{ score.candidate.politicalNuance.color }}',
+                                        {% for candidacy in electionRound.candidacies %}
+                                            {% if candidacy.candidate.id == score.candidate.id %}
+                                                color: '{{ candidacy.politicalNuance.color }}',
+                                            {% endif %}
+                                        {% endfor %}
+
                                         name: '{{ score.candidate.firstname  }} {{ score.candidate.lastname  }}',
                                         y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
                                         drilldown: null
@@ -168,7 +173,12 @@
                                         {% for score in electionRound.scores %}
                                             {% if (score.voices*100/electionRound.votesCast) < resultMin %}
                                                 {
-                                                color: '{{ score.candidate.politicalNuance.color }}',
+                                                {% for candidacy in electionRound.candidacies %}
+                                                    {% if candidacy.candidate.id == score.candidate.id %}
+                                                        color: '{{ candidacy.politicalNuance.color }}',
+                                                    {% endif %}
+                                                {% endfor %}
+
                                                 name: '{{ score.candidate.name }}',
                                                 y: {{ (score.voices*100/electionRound.votesCast)|number_format(2, null, " ") }},
                                                 drilldown: null
