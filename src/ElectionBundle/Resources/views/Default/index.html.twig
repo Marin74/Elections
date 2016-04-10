@@ -57,12 +57,14 @@
             }
         {% endfor %}
 
-        this._div.innerHTML = '<h4>{{ mapResults[0].electionRound.election.name }} {% if mapResults[0].electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>' +
-            (department ? "<h5>" + department + "</h5>": "") +
-            (props ?
-                '<strong>' + name1 + '</strong><br />' + result1 + ' %<br />' +
-                '<strong>' + name2 + '</strong><br />' + result2 + ' %'
-                : 'Passez la souris sur la carte.');
+        {% if mapResults|length != 0 %}
+            this._div.innerHTML = '<h4>{{ mapResults[0].electionRound.election.name }} {% if mapResults[0].electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>' +
+                (department ? "<h5>" + department + "</h5>": "") +
+                (props ?
+                    '<strong>' + name1 + '</strong><br />' + result1 + ' %<br />' +
+                    '<strong>' + name2 + '</strong><br />' + result2 + ' %'
+                    : 'Passez la souris sur la carte.');
+        {% endif %}
     };
 
     info.addTo(map);
@@ -85,7 +87,11 @@
             }
         {% endfor %}
 
-        return 'white';
+        {% if mapResults|length != 0 %}
+            return 'white';
+        {% else %}
+            return 'grey';
+        {% endif %}
     }
 
     function style(feature) {
@@ -127,9 +133,11 @@
     function zoomToFeature(e) {
         //map.fitBounds(e.target.getBounds());
 
-        var whereToGo = "{{ path("election_department", {"id": mapResults[0].electionRound.election.id, "code": "XXX"}) }}";
-        whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
-        window.location.href = whereToGo;
+        {% if mapResults|length != 0 %}
+            var whereToGo = "{{ path("election_department", {"id": mapResults[0].electionRound.election.id, "code": "XXX"}) }}";
+            whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
+            window.location.href = whereToGo;
+        {% endif %}
     }
 
     function onEachFeature(feature, layer) {

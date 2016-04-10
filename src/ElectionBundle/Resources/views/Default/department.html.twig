@@ -164,7 +164,11 @@
                 }
             {% endfor %}
 
-            return 'white';
+            {% if mapResults|length != 0 %}
+                return 'white';
+            {% else %}
+                return 'grey';
+            {% endif %}
         }
 
         function style(feature) {
