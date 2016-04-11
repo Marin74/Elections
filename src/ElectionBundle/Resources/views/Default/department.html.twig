@@ -125,12 +125,11 @@
             {% endfor %}
 
             {% if mapResults|length > 0 %}
-                this._div.innerHTML = '<h4>{{ mapResults[0].electionRound.election.name }} {% if mapResults[0].electionRound.number == 1 %}1er{% else %}2ème{% endif %} tour</h4>' +
-                    (area ? "<h5>" + area + "</h5>": "") +
+                this._div.innerHTML = (area ? "<h5>" + area + "</h5>": "") +
                         (props ?
                         '<strong>' + name1 + '</strong><br />' + result1 + '<br />' +
                         '<strong>' + name2 + '</strong><br />' + result2
-                        : 'Passez la souris sur la carte.');
+                        : '&nbsp;');
             {% endif %}
         };
 
