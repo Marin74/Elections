@@ -16,7 +16,13 @@ class DefaultController extends Controller
 
         $lastElectionRound = $repoElectionRound->findOneBy(array(), array("date" => "asc"));
 
-        $mapResults = $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound));
+        $tempMapResults = $repoResult->findBy(array("town" => null, "electionRound" => $lastElectionRound));
+
+        $mapResults = array();
+        foreach($tempMapResults as $mapResult) {
+            if($mapResult->getDepartment() != null)
+                $mapResults[] = $mapResult;
+        }
 
         // Get candidates who arrive first in an area
         $mapCandidacies = array();

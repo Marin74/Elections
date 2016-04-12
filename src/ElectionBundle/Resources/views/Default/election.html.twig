@@ -94,12 +94,12 @@
         {% endif %}
     </div>
     <div class="col-md-6">
-        {% if election is not null and election.electionRounds.count > 0 %}
+        {% if election is not null and election.electionRounds.count > 0 and election.electionRounds[0].scores.count > 0 %}
             <div id="chartRound1" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
         {% endif %}
    </div>
     <div class="col-md-6">
-        {% if election is not null and election.electionRounds.count > 1 %}
+        {% if election is not null and election.electionRounds.count > 1 and election.electionRounds[1].scores.count > 0 %}
             <div id="chartRound2" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
         {% endif %}
     </div>
