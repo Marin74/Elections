@@ -54,7 +54,18 @@
                                             {% set hint = "(élue)" %}
                                         {% endif %}
                                     {% else %}
-                                        {% set hint = " (second tour)" %}
+
+                                        {% set candidateElected = false %}
+
+                                        {% for tempScore in electionRound.scores %}
+                                            {% if (tempScore.voices*100/electionRound.votesCast) > 50 %}
+                                                {% set candidateElected = true %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if candidateElected == false %}
+                                            {% set hint = " (second tour)" %}
+                                        {% endif %}
                                     {% endif %}
                                 {% elseif electionRound.number == 2 and loop.index == 1 %}
                                     {% set strong = true %}
