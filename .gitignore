@@ -30,3 +30,5 @@
 .idea/vcs.xml
 
 .idea/workspace.xml
+
+phpunit.xml.dist
