@@ -1,4 +1,4 @@
-elections
+Elections
 =========
 
-A Symfony project created on October 14, 2016, 10:24 pm.
+Site en Symfony 3 qui recense les résultats des élections françaises.
