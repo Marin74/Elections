@@ -1,0 +1,23 @@
+{% extends 'AppBundle:Admin:design.html.twig' %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+    	<div class="col-md-6">
+        	{% if nuance is null %}
+        		<h4>{{ "unknown_nuance"|trans }}</h4>
+    		{% else %}
+    			<h4>{{ nuance.code }} {{ nuance.name }}</h4>
+    			
+                <p>
+                    {% include 'AppBundle:Template:formNuance.html.twig' with {'form': form} %}
+                </p>
+    		{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

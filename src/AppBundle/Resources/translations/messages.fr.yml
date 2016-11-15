@@ -1,0 +1,85 @@
+app:
+    name: Élections
+search: Rechercher
+search_item: Rechercher une élection, un territoire (commune, département...)
+list: Liste
+unknown_election: Élection inconnue
+round_1: Premier tour
+round_2: Second tour
+round_3: Troisième tour
+round_4: Quatrième tour
+round_5: Cinquième tour
+round_6: Sixième tour
+round_7: Septième tour
+round_8: Huitième tour
+round_9: Neuvième tour
+round_10: Dixième tour
+round_11: Onzième tour
+round_12: Douzième tour
+round_13: Treizième tour
+registered: Inscrits
+voters: Votants
+votes_cast: Suffrages exprimés
+blank_and_invalid_votes: Bulletins blancs et nuls
+abstention: Abstention
+number: Nombre
+administration: Administration
+gender_m: Homme
+gender_f: Femme
+candidates: Candidat(e)s
+elections: Élections
+unknown_candidate: Candidat(e) inconnu(e)
+firstname: Prénom
+lastname: Nom
+gender: Sexe
+save: Sauvegarder
+dashboard: Tableau de bord
+return: Retour
+candidate_updated: Candidat(e) mis(e) à jour.
+candidate_added: Candidat(e) ajouté(e).
+new_candidate: Nouveau candidat
+close: Fermer
+new_election: Nouvelle élection
+name: Nom
+type: Type
+election_type: Type d'élection
+election_updated: Élection mise à jour.
+election_added: Élection ajoutée.
+rounds: Tours de l'élection
+roundNumber: Tour n°
+date: Date
+nuances: Nuances
+new_nuance: Nouvelle nuance
+nuance_added: Nuance ajoutée.
+nuance_updated: Nuance mise à jour.
+code: Code
+color: Couleur
+unknown_candidate: Nuance inconnue
+result_country: Résultat national
+new_candidacy: Nouvelle candidature
+candidate: Candidat(e)
+nuance: Nuance
+candidacy_added: Candidature ajoutée.
+round: Round
+new_score: Nouveau résultat
+score_added: Résultat ajouté.
+candidacy: Candidature
+voices: Voix
+percentage: Pourcentage
+elected: Élu(e)
+second_round: (second tour)
+other_candidates: Autres candidats
+results: Résultats
+candidate_already_added: Candidat(e) déjà ajouté(e).
+score_already_added: Résultat déjà ajouté.
+various: Divers
+results: Résultats
+no_results: Pas de résultat.
+unknown_city: Ville inconnue
+election_city: "%election% à %city%"
+ids_candidate_candidacy: "ID candidat : %candidate% - ID candidature : %candidacy%"
+no_result_found: Pas de résultat trouvé.
+percent_and_value: "%value% (%percent% %)"
+data_copyright: Données ©
+data_source_name: Data.gouv.fr
+data_source_website: http://data.gouv.fr

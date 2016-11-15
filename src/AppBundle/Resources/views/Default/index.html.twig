@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div id="mapid" style="height: 500px; margin: 0 auto"></div>
+<div class="container">
+    <div class="jumbotron">
+        <h2>Rechercher</h2>
+        <form method="post" action="{{ url("app_search") }}">
+            <p>
+                <input type="text" class="form-control" placeholder="{{ "search_item"|trans }}" name="search">
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+
+$(function() {
+
+    // Set map
+    var map = L.map('mapid').setView([47.665387356326534, 2.70263671875], 5);
+    
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={{ mapbox_access_token }}', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        id: 'mapbox.light'
+    }).addTo(map);
+    
+    map.attributionControl.addAttribution('{{ "data_copyright"|trans }} <a href="{{ "data_source_website"|trans }}">{{ "data_source_name"|trans }}</a>');
+
+    // Prevent the zoom when we scroll the webpage
+    map.scrollWheelZoom.disable();
+
+    var district_boundary;
+
+    // Set geojson shapes
+    $.ajax({
+        dataType: "json",
+        url: "{{ asset("bundles/app/france-geojson/departements.geojson") }}",
+        success: function(data) {
+
+            var multipolygon = L.geoJson(data, {
+                style: style, onEachFeature: onEachFeature
+            });
+
+            district_boundary = multipolygon.addTo(map);
+            map.fitBounds(multipolygon.getBounds());
+        }
+    });
+
+    // Design layout features
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    function resetHighlight(e) {
+        district_boundary.resetStyle(e.target);
+        info.update();
+    }
+
+    function zoomToFeature(e) {
+        // TODO
+    }
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 4,
+            color: '#fff',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+    }
+
+    function style(feature) {
+
+        return {
+            fillColor: getColor(feature.properties.code),
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }
+
+    function getColor(d) {
+
+        return 'grey';
+    }
+});
+
+</script>
+{% endblock %}

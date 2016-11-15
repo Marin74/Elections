@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-6">
+        <h3>
+            {{ "results"|trans }}
+        </h3>
+        {% if results|length == 0 %}
+        	<p>
+        		{{ "no_result_found"|trans }}
+        	</p>
+        {% else %}
+            <ul>
+				{% for city in results %}
+					<li><a href="{{ url("app_city", {"id": city.id}) }}">{{ city.name }}{% if city.artmin is not empty %} {{ city.artmin }}{% endif %} ({{ city.dep }})</a></li>
+				{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>	
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

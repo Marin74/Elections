@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-6">
+        {% if city is null %}
+            <h3>
+                {{ "unknown_city"|trans }}
+            </h3>
+		{% else %}
+            <h3>
+		        {{ city.fullName }}
+            </h3>
+            <ul>
+				{% for election in city.elections %}
+					<li><a href="{{ url("app_election_city", {"election_id": election.id, "city_id": city.id}) }}">{{ election.name }}</a></li>
+				{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>	
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

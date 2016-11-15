@@ -1,0 +1,23 @@
+:root {
+    --main-color: #2780e3;
+}
+.center{
+    margin:0 auto;
+    text-align: center;
+}
+.navbar-inverse{
+    background-color: var(--main-color);
+    border-color: var(--main-color);
+}
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav>li>a{
+	color: white;
+}
+.navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form, .navbar-inverse .navbar-toggle{
+	border-color: white;
+}
+.navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover{
+	background-color: white;
+}
+.navbar-inverse .navbar-toggle:hover .icon-bar{
+	background-color: var(--main-color);
+}

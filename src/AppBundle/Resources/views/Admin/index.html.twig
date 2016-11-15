@@ -1,0 +1,26 @@
+{% extends 'AppBundle:Admin:design.html.twig' %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+    	<div class="col-md-6">
+    		<h4>{{ "elections"|trans }}</h4>
+    		<ul>
+        		{% for election in elections %}
+        			<li><a href="{{ url("app_admin_election", {"id": election.id}) }}">{{ election.name }}</a></li>
+        		{% endfor %}
+    		</ul>
+    		<h4>{{ "candidates"|trans }}</h4>
+    		<ul>
+        		{% for candidate in candidates %}
+        			<li><a href="{{ url("app_admin_candidate", {"id": candidate.id}) }}">{{ candidate.firstname }} {{ candidate.lastname }}</a></li>
+        		{% endfor %}
+    		</ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

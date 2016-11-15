@@ -1,0 +1,43 @@
+{{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+{# General errors of the form #}
+{{ form_errors(form) }}
+
+{# Manual and exploded generation: #}
+<div class="form-group">
+
+    {# Label. #}
+    {{ form_label(form.candidacy, "candidacy", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+
+    <div class="col-sm-10">
+
+        {# Display errors for this field. #}
+        {{ form_errors(form.candidacy) }}
+
+        {# Input #}
+        {{ form_widget(form.candidacy, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+<div class="form-group">
+
+    {{ form_label(form.voices, "voices", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+	
+    <div class="col-sm-10">
+        {{ form_errors(form.voices) }}
+
+        {{ form_widget(form.voices, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+
+{{ form_rest(form) }}
+
+<div class="form-group">
+
+    <div class="col-sm-2 control-label"></div>
+
+    <div class="col-sm-10">
+        <button type="submit" class="btn btn-success">{{ "save"|trans }}</button>
+    </div>
+</div>
+
+{# Close <form> #}
+{{ form_end(form) }}

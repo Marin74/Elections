@@ -1,0 +1,94 @@
+{% extends 'AppBundle:Admin:design.html.twig' %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+        <div class="col-md-6">
+        	{% if election is null %}
+        		<h4>{{ "unknown_election"|trans }}</h4>
+        	{% else %}
+        		<h4>{{ election.name }}</h4>
+        		<p>
+                    {% include 'AppBundle:Template:formElection.html.twig' with {'form': form} %}
+        		</p>
+        		
+        		<h4>{{ "candidates"|trans }}</h4>
+        		
+        		<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalNewCandidacy">
+    				{{ "new_candidacy"|trans }}
+                </button>
+        		
+        		<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalNewScore">
+    				{{ "new_score"|trans }}
+                </button>
+        		
+        		{% for round in election.rounds %}
+        			<h5>{{ ("round_"~round.roundNumber)|trans }}</h5>
+        			
+        			{% if round.candidacies|length > 0 %}
+            			<ul>
+            				{% for candidacy in round.candidacies %}
+            					<li>
+                                    {{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }} 
+                                    {% if round.resultCountry != null %}
+                                        {% for score in round.resultCountry.scores %}
+                                    		{% if score.candidacy.id == candidacy.id %}
+                                    			 ({{ score.voices|number_format }})
+                                    		{% endif %}
+                                    	{% endfor %}
+                                    {% endif %}
+                                    <ul>
+                                    	<li>
+                                    	    <em>{{ "ids_candidate_candidacy"|trans({"%candidate%": candidacy.candidate.id, "%candidacy%": candidacy.id}) }}</em>
+										</li>
+                                    </ul>
+            					</li>
+            				{% endfor %}
+            			</ul>
+        			{% endif %}
+        		{% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>	
+
+<!-- Modal -->
+<div class="modal fade" id="modalNewCandidacy" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">{{ "new_candidate"|trans }}</h4>
+			</div>
+			<div class="modal-body">
+	            {% include 'AppBundle:Template:formCandidacy.html.twig' with {'form': formCandidacy} %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ "close"|trans }}</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="modalNewScore" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">{{ "new_candidate"|trans }}</h4>
+			</div>
+			<div class="modal-body">
+	            {% include 'AppBundle:Template:formScore.html.twig' with {'form': formScore} %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ "close"|trans }}</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block js %}
+{% endblock %}

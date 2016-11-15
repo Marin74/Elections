@@ -1,0 +1,293 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_elections") }}">{{ "elections"|trans }}</a></li>
+		{% if election is null %}
+			<li class="active">{{ "unknown_election"|trans }}</li>
+		{% else %}
+    		<li class="active">{{ election.name }}</li>
+		{% endif %}
+	</ol>
+	
+	{% if previousElection is not null or nextElection is not null %}
+		<nav aria-label="">
+			<ul class="pager">
+				{% if previousElection is not null %}
+					<li class="previous"><a href="{{ url("app_election", {"id": previousElection.id}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
+				{% endif %}
+				{% if nextElection is not null %}
+					<li class="next"><a href="{{ url("app_election", {"id": nextElection.id}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
+				{% endif %}
+			</ul>
+		</nav>
+	{% endif %}
+	
+    <div class="col-md-6">
+    	{% if election is null %}
+    		<h3>{{ "unknown_election"|trans }}</h3>
+    	{% else %}
+    		
+    		<h3>{{ election.name }}</h3>
+    		
+    		{% for round in election.rounds %}
+    			<h4>{{ ("round_"~round.roundNumber)|trans }}</h4>
+    			
+    			{% set resultCountry = round.resultCountry %}
+    			
+    			{% if resultCountry is not null %}
+        			<table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{{ "number"|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        	{% if resultCountry.registered is not null %}
+                        		<tr>
+                        			<td>{{ "registered"|trans }}</td>
+                        			<td>{{ resultCountry.registered|number_format }}</td>
+                        		</tr>
+                    		{% endif %}
+                        	{% if resultCountry.voters is not null %}
+                        		<tr>
+                        			<td>{{ "voters"|trans }}</td>
+                        			<td>
+                        				{% if resultCountry.registered is not empty %}
+                        			        {{ "percent_and_value"|trans({"%value%": resultCountry.voters|number_format, "%percent%": (resultCountry.voters*100/resultCountry.registered)|number_format(1, null, " ")}) }}
+                        			    {% else %}
+                        			    	{{ resultCountry.voters|number_format }}
+                        			   	{% endif %}
+                        			</td>
+                        		</tr>
+                    		{% endif %}
+                        	{% if resultCountry.votesCast is not null %}
+                        		<tr>
+                        			<td>{{ "votes_cast"|trans }}</td>
+                        			<td>{{ resultCountry.votesCast|number_format }}</td>
+                        		</tr>
+                    		{% endif %}
+                        	{% if resultCountry.blankAndInvalidVotes is not null %}
+                        		<tr>
+                        			<td>{{ "blank_and_invalid_votes"|trans }}</td>
+                        			<td>{{ resultCountry.blankAndInvalidVotes|number_format }}</td>
+                        		</tr>
+                    		{% endif %}
+                        	{% if resultCountry.abstention is not null %}
+                        		<tr>
+                        			<td>{{ "abstention"|trans }}</td>
+                        			<td>
+                        				{% if resultCountry.registered is not empty %}
+                        			        {{ "percent_and_value"|trans({"%value%": resultCountry.abstention|number_format, "%percent%": (resultCountry.abstention*100/resultCountry.registered)|number_format(1, null, " ")}) }}
+                        			    {% else %}
+                        			    	{{ resultCountry.abstention|number_format }}
+                        			   	{% endif %}
+                        			</td>
+                        		</tr>
+                    		{% endif %}
+                        </tbody>
+                    </table>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <td>{{ "candidate"|trans }}</td>
+                                <td>{{ "voices"|trans }}</td>
+                                <td>{{ "percentage"|trans }}</td>
+                            </tr>
+                    	</thead>
+                        {% if resultCountry.scores.count != 0 %}
+                        
+                            {% for score in resultCountry.scores %}
+                            	
+                                {% set strong = false %}
+                                {% set hint = "" %}
+                                
+                                {% if round.roundNumber == 1 and loop.index <= 2 %}
+                                    {% set strong = true %}
+                                    
+                                    {% if (score.voices*100/resultCountry.votesCast) > 50 %}
+                                        {% set hint = "elected"|trans %}
+                                    {% else %}
+    
+                                        {% set candidateElected = false %}
+    
+                                        {% for tempScore in resultCountry.scores %}
+                                            {% if (tempScore.voices*100/resultCountry.votesCast) > 50 %}
+                                                {% set candidateElected = true %}
+                                            {% endif %}
+                                        {% endfor %}
+    
+                                        {% if candidateElected == false %}
+                                            {% set hint = " "~"second_round"|trans %}
+                                        {% endif %}
+                                    {% endif %}
+                                {% elseif round.roundNumber == 2 and loop.index == 1 %}
+                                    {% set strong = true %}
+                                    {% set hint = " "~"elected"|trans %}
+                                {% endif %}
+                                <tr>
+                                    <td>
+                                        {% if strong %}<strong>{% endif %}
+                                            {{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}
+                                        {% if strong %}</strong>{% endif %}
+                                        <br/>
+                                        <em>{{ score.candidacy.nuance.name }}</em>
+                                    </td>
+                                    <td>
+                                        {% if strong %}<strong>{% endif %}
+                                            {{ score.voices|number_format }}
+                                        {% if strong %}</strong>{% endif %}
+                                    </td>
+                                    <td>
+                                        {% if strong %}<strong>{% endif %}
+                                        	{% if resultCountry.votesCast != null %}
+                                                {{ (score.voices*100/resultCountry.votesCast)|number_format(2, null, " ") }} %
+                                            {% endif %}
+                                            {{ hint }}
+                                        {% if strong %}</strong>{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            {% for candidacy in round.candidacies %}
+                                <tr>
+                                    <td>
+                                        {{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}
+                                        <br/>
+                                        <em>{{ candidacy.nuance.name }}</em>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                {% endif %}
+    		{% endfor %}
+        {% endif %}
+    </div>
+    
+    {% if election is not null %}
+        {% for round in election.rounds %}
+            <div class="col-md-6">
+                {% if round.resultCountry != null
+                    and round.resultCountry.scores.count > 0 %}
+                    <div id="chartRound{{ loop.index }}" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    {% if election is not null %}
+        {% for round in election.rounds %}
+        	{% if round.resultCountry != null %}
+                $(function () {
+                    // Create the chart
+                    $('#chartRound{{ loop.index }}').highcharts({
+                        chart: {
+                            type: 'pie'
+                        },
+                        title: {
+                            text: '{{ "results"|trans }}'
+                        },
+                        subtitle: {
+                            text: '{{ ("round_"~round.roundNumber)|trans }}'
+                        },
+                        plotOptions: {
+                            series: {
+                                dataLabels: {
+                                    enabled: true,
+                                    format: '{point.name} : {point.y:.1f} %'
+                                }
+                            }
+                        },
+            
+                        tooltip: {
+                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                            pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/><span style="font-size:11px"><em>{point.nuance}</em></span><br/>'
+                        },
+                        series: [{
+                            name: '{{ "candidate"|trans }}',
+                            colorByPoint: true,
+                            data: [
+            
+                                {% set resultMin = 5 %}
+                                {% set smallCandidates = 0 %}
+                                {% set totalVoices = 0 %}
+                                {% set iScores = 0 %}
+            
+                                {% for score in round.resultCountry.scores %}
+
+									{% set iScores = iScores + 1 %}
+                                    {% set totalVoices = totalVoices + score.voices %}
+                                	
+                                    {% if (score.voices*100/round.resultCountry.votesCast) >= resultMin or (iScores == round.resultCountry.scores|length and smallCandidates == 0) %}
+                                        {
+                                        	color: '{{ score.candidacy.nuance.color }}',
+                                            name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname  }}',
+                                            y: {{ (score.voices*100/round.resultCountry.votesCast)|number_format(2, null, " ") }},
+                                            nuance: '{{ score.candidacy.nuance.name }}',
+                                            drilldown: null
+                                        },
+                                    {% else %}
+                                        {% set smallCandidates = smallCandidates + (score.voices*100/round.resultCountry.votesCast) %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if totalVoices != round.resultCountry.votesCast %}
+                                    {
+                                    	color: 'grey',
+                                        name: '{{ "various"|trans }}',
+                                        y: {{ ((round.resultCountry.votesCast - totalVoices)*100/round.resultCountry.votesCast)|number_format(2, null, " ") }},
+                                        drilldown: null
+                                    },
+                                {% endif %}
+            
+                                {% if smallCandidates != 0 %}
+                                    {
+                                        name: '{{ "other_candidates"|trans }}',
+                                        y: {{ smallCandidates|number_format(2, null, " ") }},
+                                        drilldown: 'other'
+                                    },
+                                {% endif %}
+                            ]
+                        }],
+                        drilldown: {
+                            series: [
+                                {% if smallCandidates != 0 %}
+                                    {
+                                        name: '{{ "other_candidates"|trans }}',
+                                        id: 'other',
+                                        data: [
+                                            {% for score in round.resultCountry.scores %}
+                                                {% if (score.voices*100/round.resultCountry.votesCast) < resultMin %}
+                                                    {
+                                                    	color: '{{ score.candidacy.nuance.color }}',
+                                                        name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
+                                                        y: {{ (score.voices*100/round.resultCountry.votesCast)|number_format(2, null, " ") }},
+                                                        nuance: '{{ score.candidacy.nuance.name }}',
+                                                        drilldown: null
+                                                    },
+                                                {% endif %}
+                                            {% endfor %}
+                                        ]
+                                    },
+                                {% endif %}
+                            ]
+                        }
+                    });
+                });
+			{% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+{% endblock %}

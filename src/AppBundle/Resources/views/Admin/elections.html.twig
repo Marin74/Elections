@@ -1,0 +1,43 @@
+{% extends 'AppBundle:Admin:design.html.twig' %}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+    	<div class="col-md-6">
+    		<h4>{{ "elections"|trans }}</h4>
+    		<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalNew">
+				{{ "new_election"|trans }}
+            </button>
+            <p>
+        		<ul>
+            		{% for election in elections %}
+            			<li><a href="{{ url("app_admin_election", {"id": election.id}) }}">{{ election.name }}</a></li>
+            		{% endfor %}
+        		</ul>
+    		</p>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalNew" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">{{ "new_election"|trans }}</h4>
+			</div>
+			<div class="modal-body">
+	            {% include 'AppBundle:Template:formElection.html.twig' with {'form': form} %}
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">{{ "close"|trans }}</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

@@ -1,0 +1,40 @@
+# Routes are in French but they can be modified
+app_homepage:
+    path:     /
+    defaults: { _controller: "AppBundle:Default:index" }
+app_search:
+    path:     /recherche
+    defaults: { _controller: "AppBundle:Default:search" }
+app_elections:
+    path:     /elections
+    defaults: { _controller: "AppBundle:Default:elections" }
+app_election:
+    path:     /election/{id}
+    defaults: { _controller: "AppBundle:Default:election" }
+app_election_city:
+    path:     /election/{election_id}/ville/{city_id}
+    defaults: { _controller: "AppBundle:Default:electionCity" }
+app_city:
+    path:     /ville/{id}
+    defaults: { _controller: "AppBundle:Default:city" }
+app_admin:
+    path:     /admin
+    defaults: { _controller: "AppBundle:Admin:index" }
+app_admin_candidate:
+    path:     /admin/candidat/{id}
+    defaults: { _controller: "AppBundle:Admin:candidate" }
+app_admin_candidates:
+    path:     /admin/candidats
+    defaults: { _controller: "AppBundle:Admin:candidates" }
+app_admin_elections:
+    path:     /admin/elections
+    defaults: { _controller: "AppBundle:Admin:elections" }
+app_admin_election:
+    path:     /admin/election/{id}
+    defaults: { _controller: "AppBundle:Admin:election" }
+app_admin_nuances:
+    path:     /admin/nuances
+    defaults: { _controller: "AppBundle:Admin:nuances" }
+app_admin_nuance:
+    path:     /admin/nuance/{id}
+    defaults: { _controller: "AppBundle:Admin:nuance" }
