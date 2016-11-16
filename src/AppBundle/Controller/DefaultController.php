@@ -89,19 +89,22 @@ class DefaultController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoCity = $em->getRepository("AppBundle:City");
     	$search = trim($request->get("search"));
+    	$results = array();
     	
-    	$query = $repoCity->createQueryBuilder('c');
-    	$query->where($query->expr()->like("replace(CONCAT(replace(replace(c.artmin, ')', ''), '(', ''), c.nccenr), '-', ' ')", "replace(:search, '-', ' ')"))
+    	if(!empty($search)) {
+    		$query = $repoCity->createQueryBuilder('c');
+    		$query->where($query->expr()->like("replace(CONCAT(replace(replace(c.artmin, ')', ''), '(', ''), c.nccenr), '-', ' ')", "replace(:search, '-', ' ')"))
     		->andWhere("c.actual != :actual")
-			->orderBy('c.nccenr', 'ASC')
-			->setParameter('search', '%'.$search.'%')
+    		->orderBy('c.nccenr', 'ASC')
+    		->setParameter('search', '%'.$search.'%')
     		->setParameter('actual', City::ACTUAL_FRACTION_CANTONALE);
-
-		$results = $query->getQuery()->getResult();
-		
-		if(count($results) == 1) {
-			return $this->redirectToRoute("app_city", array("id" => $results[0]->getId()));
-		}
+    		
+    		$results = $query->getQuery()->getResult();
+    		
+    		if(count($results) == 1) {
+    			return $this->redirectToRoute("app_city", array("id" => $results[0]->getId()));
+    		}
+    	}
 		
     	return $this->render('AppBundle:Default:search.html.twig', array(
     		'results'	=> $results
@@ -113,6 +116,17 @@ class DefaultController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoCity = $em->getRepository("AppBundle:City");
     	$city = $repoCity->find($request->get("id"));
+    	
+    	// Redirect to the latest election
+    	if($city != null) {
+    		
+    		if(count($city->getResults()) > 0)
+    			return $this->redirectToRoute("app_election_city", array(
+    					"election_id"	=> $city->getResults()[count($city->getResults())-1]->getRound()->getElection()->getId(),
+    					"city_id"		=> $city->getId()
+    				)
+    			);
+    	}
     	 
     	return $this->render('AppBundle:Default:city.html.twig', array(
 			'city' => $city,
@@ -149,11 +163,14 @@ class DefaultController extends Controller
     			$previousElection = $repoElection->createQueryBuilder("e")
     			->join("e.rounds", "r")
     			->select("e")
+    			->join("r.resultsCity", "rc")
     			->where("e.type = :type")
     			->andWhere("r.roundNumber = 1")
+    			->andWhere("rc.city = :city")
     			->andWhere("r.date < :date")
     			->andWhere("e != :election")
     			->setParameter("type", $election->getType())
+    			->setParameter("city", $city)
     			->setParameter("date", $election->getRounds()[0]->getDate())
     			->setParameter("election", $election)
     			->orderBy("r.date", "DESC")
@@ -164,11 +181,14 @@ class DefaultController extends Controller
     			$nextElection = $repoElection->createQueryBuilder("e")
     			->join("e.rounds", "r")
     			->select("e")
+    			->join("r.resultsCity", "rc")
     			->where("e.type = :type")
     			->andWhere("r.roundNumber = 1")
+    			->andWhere("rc.city = :city")
     			->andWhere("r.date > :date")
     			->andWhere("e != :election")
     			->setParameter("type", $election->getType())
+    			->setParameter("city", $city)
     			->setParameter("date", $election->getRounds()[0]->getDate())
     			->setParameter("election", $election)
     			->orderBy("r.date", "ASC")
