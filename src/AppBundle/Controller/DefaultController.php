@@ -93,11 +93,17 @@ class DefaultController extends Controller
     	
     	if(!empty($search)) {
     		$query = $repoCity->createQueryBuilder('c');
-    		$query->where($query->expr()->like("replace(CONCAT(replace(replace(c.artmin, ')', ''), '(', ''), c.nccenr), '-', ' ')", "replace(:search, '-', ' ')"))
-    		->andWhere("c.actual != :actual")
+    		$query
+    		->where($query->expr()->notIn("c.actual", ":actual"))
+    		->andWhere(
+    			$query->expr()->orX(
+    				$query->expr()->like("replace(CONCAT(replace(replace(c.artmin, ')', ''), '(', ''), c.nccenr), '-', ' ')", "replace(:search, '-', ' ')"),
+    				$query->expr()->like("replace(CONCAT(replace(replace(c.artmin, ')', ' '), '(', ''), c.nccenr), '-', ' ')", "replace(:search, '-', ' ')")
+    			)
+    		)
     		->orderBy('c.nccenr', 'ASC')
     		->setParameter('search', '%'.$search.'%')
-    		->setParameter('actual', City::ACTUAL_FRACTION_CANTONALE);
+    		->setParameter('actual', array(City::ACTUAL_ANCIEN_CODE_CHGT_DEP, City::ACTUAL_FRACTION_CANTONALE));
     		
     		$results = $query->getQuery()->getResult();
     		
