@@ -67,7 +67,7 @@ $(function() {
     }
 
     function zoomToFeature(e) {
-        // TODO
+		// TODO
     }
 
     function highlightFeature(e) {
@@ -101,6 +101,18 @@ $(function() {
 
     function getColor(d) {
 
+	    {% for result in round.resultsDepartment %}
+			if(d == '{{ result.department.dep }}' || d == '0{{ result.department.dep }}') {
+	            {% if result.scores|length > 0 %}
+                	return '{{ result.scores[0].candidacy.nuance.color }}';
+            {% endif %}
+            }
+        {% endfor %}
+    	
+        {% if round.resultsDepartment|length != 0 %}
+            return 'white';
+        {% endif %}
+    	
         return 'grey';
     }
 });

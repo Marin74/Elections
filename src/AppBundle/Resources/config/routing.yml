@@ -11,9 +11,15 @@ app_elections:
 app_election:
     path:     /election/{id}
     defaults: { _controller: "AppBundle:Default:election" }
+app_election_department:
+    path:     /election/{election_id}/departement/{department_id}
+    defaults: { _controller: "AppBundle:Default:electionDepartment" }
 app_election_city:
     path:     /election/{election_id}/ville/{city_id}
     defaults: { _controller: "AppBundle:Default:electionCity" }
+app_department:
+    path:     /departement/{id}
+    defaults: { _controller: "AppBundle:Default:department" }
 app_city:
     path:     /ville/{id}
     defaults: { _controller: "AppBundle:Default:city" }

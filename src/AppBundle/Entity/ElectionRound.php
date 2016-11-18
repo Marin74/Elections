@@ -60,6 +60,11 @@ class ElectionRound
      */
     private $resultsCity;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDepartment",mappedBy="round")
+     */
+    private $resultsDepartment;
+
 
     /**
      * Get id
@@ -151,6 +156,11 @@ class ElectionRound
     public function getResultsCity()
     {
     	return $this->resultsCity;
+    }
+    
+    public function getResultsDepartment()
+    {
+    	return $this->resultsDepartment;
     }
 }
 

@@ -10,12 +10,6 @@
         			<li><a href="{{ url("app_admin_election", {"id": election.id}) }}">{{ election.name }}</a></li>
         		{% endfor %}
     		</ul>
-    		<h4>{{ "candidates"|trans }}</h4>
-    		<ul>
-        		{% for candidate in candidates %}
-        			<li><a href="{{ url("app_admin_candidate", {"id": candidate.id}) }}">{{ candidate.firstname }} {{ candidate.lastname }}</a></li>
-        		{% endfor %}
-    		</ul>
         </div>
     </div>
 </div>

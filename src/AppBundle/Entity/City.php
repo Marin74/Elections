@@ -159,6 +159,12 @@ class City
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultCity",mappedBy="city")
      */
     private $results;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Department",inversedBy="cities")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     */
+    private $department;
 
 
     /**
@@ -653,6 +659,11 @@ class City
     	}
     	
     	return $elections;
+    }
+
+    public function getDepartment()
+    {
+    	return $this->department;
     }
 }
 

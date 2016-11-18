@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * ResultCity
  *
- * @ORM\Table(name="result_city")
+ * @ORM\Table(name="result_department")
  * @ORM\Entity()
  */
-class ResultCity extends Result
+class ResultDepartment extends Result
 {
 
     /**
@@ -20,13 +20,13 @@ class ResultCity extends Result
     private $round;
     
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\City",inversedBy="results")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Department",inversedBy="results")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    private $city;
+    private $department;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreCity",mappedBy="result")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreDepartment",mappedBy="result")
      * @ORM\OrderBy({"voices" = "desc"})
      */
     private $scores;
@@ -155,6 +155,11 @@ class ResultCity extends Result
     public function getRound()
     {
     	return $this->round;
+    }
+
+    public function getDepartment()
+    {
+    	return $this->department;
     }
 
     public function getScores()

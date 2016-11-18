@@ -63,6 +63,16 @@ class Department
      */
     private $nccenr;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\City",mappedBy="department")
+     */
+    private $cities;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDepartment",mappedBy="department")
+     */
+    private $results;
+
 
     /**
      * Get id
@@ -216,6 +226,34 @@ class Department
     public function getNccenr()
     {
         return $this->nccenr;
+    }
+
+    public function getName()
+    {
+    	return $this->getNccenr();
+    }
+
+    public function getResults()
+    {
+    	return $this->results;
+    }
+    
+    public function getElections()
+    {
+    	$elections = array();
+    	$electionsIds = array();
+    	
+    	foreach($this->getResults() as $result) {
+    		
+    		$election = $result->getRound()->getElection();
+    		
+    		if(!in_array($election->getId(), $electionsIds)) {
+    			$elections[] = $election;
+    			$electionsIds[] = $election->getId();
+    		}
+    	}
+    	
+    	return $elections;
     }
 }
 

@@ -22,12 +22,10 @@ class AdminController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoElection = $em->getRepository('AppBundle:Election');
     	$repoCandidate = $em->getRepository('AppBundle:Candidate');
-    	$elections = $repoElection->findBy(array(), array("name" => "ASC"));
-    	$candidates = $repoCandidate->findBy(array(), array("lastname" => "ASC", "firstname" => "ASC"));
+    	$elections = $repoElection->findBy(array(), array("name" => "DESC"));
     	
         return $this->render('AppBundle:Admin:index.html.twig', array(
-        	'elections' => $elections,
-        	'candidates' => $candidates,
+        	'elections' => $elections
         ));
     }
 
@@ -127,8 +125,8 @@ class AdminController extends Controller
     			}
     		}
     	}
-    
-    	$elections = $repoElection->findBy(array(), array("name" => "ASC"));
+    	
+    	$elections = $repoElection->findBy(array(), array("name" => "DESC"));
     	 
     	return $this->render('AppBundle:Admin:elections.html.twig', array(
     		'elections' => $elections,

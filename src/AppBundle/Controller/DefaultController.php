@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ElectionType;
 use AppBundle\Entity\City;
+use AppBundle\Entity\Department;
 
 class DefaultController extends Controller
 {
@@ -117,6 +118,28 @@ class DefaultController extends Controller
     	));
     }
 
+    public function departmentAction(Request $request)
+    {
+    	$em = $this->getDoctrine()->getManager();
+    	$repoDepartment = $em->getRepository("AppBundle:Department");
+    	$department = $repoDepartment->find($request->get("id"));
+    	
+    	// Redirect to the latest election
+    	if($department != null) {
+    		
+    		if(count($department->getResults()) > 0)
+    			return $this->redirectToRoute("app_election_department", array(
+    					"election_id"	=> $department->getResults()[count($department->getResults())-1]->getRound()->getElection()->getId(),
+    					"department_id"		=> $department->getId()
+    				)
+    			);
+    	}
+    	 
+    	return $this->render('AppBundle:Default:department.html.twig', array(
+			'department' => $department,
+    	));
+    }
+
     public function cityAction(Request $request)
     {
     	$em = $this->getDoctrine()->getManager();
@@ -136,6 +159,81 @@ class DefaultController extends Controller
     	 
     	return $this->render('AppBundle:Default:city.html.twig', array(
 			'city' => $city,
+    	));
+    }
+    
+    public function electionDepartmentAction(Request $request)
+    {
+    	$em = $this->getDoctrine()->getManager();
+    	$repoDepartment = $em->getRepository("AppBundle:Department");
+    	$repoElection = $em->getRepository("AppBundle:Election");
+    	$repoResultDepartment = $em->getRepository("AppBundle:ResultDepartment");
+    	$department = $repoDepartment->find($request->get("department_id"));
+    	$election = $repoElection->find($request->get("election_id"));
+    	$previousElection = null;
+    	$nextElection = null;
+    	$results = array();
+    	
+    	if($department != null && $election != null) {
+
+    		$results = $repoResultDepartment->createQueryBuilder("rd")
+    		->join("rd.round", "r")
+    		->select("rd")
+    		->where("r.election = :election")
+    		->andWhere("rd.department = :department")
+    		->orderBy("r.roundNumber", "DESC")
+    		->setParameter("election", $election)
+    		->setParameter("department", $department)
+    		->getQuery()
+    		->getResult();
+    		
+    		if(count($election->getRounds()) != 0) {
+    			
+    			$previousElection = $repoElection->createQueryBuilder("e")
+    			->join("e.rounds", "r")
+    			->select("e")
+    			->join("r.resultsDepartment", "rd")
+    			->where("e.type = :type")
+    			->andWhere("r.roundNumber = 1")
+    			->andWhere("rd.department = :department")
+    			->andWhere("r.date < :date")
+    			->andWhere("e != :election")
+    			->setParameter("type", $election->getType())
+    			->setParameter("department", $department)
+    			->setParameter("date", $election->getRounds()[0]->getDate())
+    			->setParameter("election", $election)
+    			->orderBy("r.date", "DESC")
+    			->setMaxResults(1)
+    			->getQuery()
+    			->getOneOrNullResult();
+    			 
+    			$nextElection = $repoElection->createQueryBuilder("e")
+    			->join("e.rounds", "r")
+    			->select("e")
+    			->join("r.resultsDepartment", "rd")
+    			->where("e.type = :type")
+    			->andWhere("r.roundNumber = 1")
+    			->andWhere("rd.department = :department")
+    			->andWhere("r.date > :date")
+    			->andWhere("e != :election")
+    			->setParameter("type", $election->getType())
+    			->setParameter("department", $department)
+    			->setParameter("date", $election->getRounds()[0]->getDate())
+    			->setParameter("election", $election)
+    			->orderBy("r.date", "ASC")
+    			->setMaxResults(1)
+    			->getQuery()
+    			->getOneOrNullResult();
+    		}
+    		
+    	}
+    
+    	return $this->render('AppBundle:Default:election_department.html.twig', array(
+    		'department'		=> $department,
+    		'election'			=> $election,
+    		'results'			=> $results,
+    		'previousElection'	=> $previousElection,
+    		'nextElection'		=> $nextElection
     	));
     }
     

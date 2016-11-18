@@ -6,15 +6,12 @@
 		<li><a href="{{ url("app_elections") }}">{{ "elections"|trans }}</a></li>
 		{% if election is null %}
 			<li class="active">{{ "unknown_election"|trans }}</li>
-		{% elseif city is null %}
+		{% elseif department is null %}
     		<li><a href="{{ url("app_election", {"id": election.id}) }}">{{ election.name }}</a></li>
-			<li class="active">{{ "unknown_city"|trans }}</li>
+			<li class="active">{{ "unknown_department"|trans }}</li>
 		{% else %}
     		<li><a href="{{ url("app_election", {"id": election.id}) }}">{{ election.name }}</a></li>
-    		{% if city.department is not null %}
-    			<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": city.department.id}) }}">{{ city.department.name }}</a></li>
-    		{% endif %}
-    		<li class="active">{{ city.fullName }}</li>
+    		<li class="active">{{ department.name }}</li>
 		{% endif %}
 	</ol>
 	
@@ -22,22 +19,22 @@
 		<nav aria-label="">
 			<ul class="pager">
 				{% if previousElection is not null %}
-					<li class="previous"><a href="{{ url("app_election_city", {"election_id": previousElection.id, "city_id": city.id}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
+					<li class="previous"><a href="{{ url("app_election_department", {"election_id": previousElection.id, "department_id": department.id}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
 				{% endif %}
 				{% if nextElection is not null %}
-					<li class="next"><a href="{{ url("app_election_city", {"election_id": nextElection.id, "city_id": city.id}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
+					<li class="next"><a href="{{ url("app_election_department", {"election_id": nextElection.id, "department_id": department.id}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
 				{% endif %}
 			</ul>
 		</nav>
 	{% endif %}
 	
-	{% if city is null %}
-		<h3>{{ "unknown_city"|trans }}</h3>
+	{% if department is null %}
+		<h3>{{ "unknown_department"|trans }}</h3>
 	{% elseif election is null %}
-		<h3>{{ city.name }}</h3>
+		<h3>{{ department.name }}</h3>
 		<p>{{ "unknown_election"|trans }}</p>
 	{% else %}
-		<h3>{{ "election_city"|trans({"%election%": election.name, "%city%": city.fullName}) }}</h3>
+		<h3>{{ "election_department"|trans({"%election%": election.name, "%department%": department.name}) }}</h3>
 		
 		{% for result in results %}
 			<hr>
