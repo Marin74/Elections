@@ -14,7 +14,7 @@ class ResultDepartment extends Result
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ElectionRound",inversedBy="resultsCity")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ElectionRound",inversedBy="resultsDepartment")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $round;
