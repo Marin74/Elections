@@ -29,6 +29,10 @@
 	{% else %}
     	<h3>{{ election.name }}</h3>
     	
+    	{% if election.description is not empty %}
+    		<p>{{ election.description }}</p>
+    	{% endif %}
+    	
     	{% for round in election.rounds %}
     		<hr>
     		<div class="row">

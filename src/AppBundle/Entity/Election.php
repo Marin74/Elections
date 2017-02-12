@@ -31,6 +31,13 @@ class Election
     private $name;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    private $description;
+
+    /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ElectionType",inversedBy="elections")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank()
@@ -76,6 +83,18 @@ class Election
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function setDescription($description)
+    {
+    	$this->description = $description;
+    	
+    	return $this;
+    }
+    
+    public function getDescription()
+    {
+    	return $this->description;
     }
     
     public function setType(ElectionType $electionType)
