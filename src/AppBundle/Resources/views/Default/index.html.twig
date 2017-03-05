@@ -68,6 +68,9 @@ $(function() {
 
     function zoomToFeature(e) {
 		// TODO
+    	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": round.election.id, "department_code": "XXX"}) }}";
+        whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
+        window.location.href = whereToGo;
     }
 
     function highlightFeature(e) {

@@ -168,11 +168,22 @@ class DefaultController extends Controller
     	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoElection = $em->getRepository("AppBundle:Election");
     	$repoResultDepartment = $em->getRepository("AppBundle:ResultDepartment");
-    	$department = $repoDepartment->find($request->get("department_id"));
     	$election = $repoElection->find($request->get("election_id"));
     	$previousElection = null;
     	$nextElection = null;
     	$results = array();
+    	
+    	$department = null;
+    	if(!empty($request->get('department_code'))) {
+    		$departmentCode = $request->get('department_code');
+    		if($this->startsWith($departmentCode, "0")) {
+    			$departmentCode = substr($departmentCode, 1, strlen($departmentCode)-1);
+    		}
+    		
+    		$department = $repoDepartment->findOneByDep($departmentCode);
+    	}
+    	else
+    		$department = $repoDepartment->find($request->get("department_id"));
     	
     	if($department != null && $election != null) {
 
@@ -311,4 +322,10 @@ class DefaultController extends Controller
     		'nextElection'		=> $nextElection
     	));
     }
+    
+    private function startsWith($haystack, $needle)
+	{
+		$length = strlen($needle);
+		return (substr($haystack, 0, $length) === $needle);
+	}
 }
