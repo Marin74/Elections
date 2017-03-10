@@ -223,7 +223,7 @@
             							result2 = "{{ (result.scores[1].voices*100/result.votesCast)|number_format(2) }}"
             							color2 = "{{ result.scores[1].candidacy.nuance.color }}"
                 	                {% endif %}
-                					area = "{{ result.city.name }}"
+                					area = "{{ result.city.fullName }}"
                 	            {% endif %}
             				}
                         {% endif %}
