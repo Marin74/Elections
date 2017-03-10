@@ -20,6 +20,9 @@ app_election_department_by_code:
 app_election_city:
     path:     /election/{election_id}/ville/{city_id}
     defaults: { _controller: "AppBundle:Default:electionCity" }
+app_election_city_by_code:
+    path:     /election/{election_id}/ville/code/{city_code}
+    defaults: { _controller: "AppBundle:Default:electionCity" }
 app_department:
     path:     /departement/{id}
     defaults: { _controller: "AppBundle:Default:department" }

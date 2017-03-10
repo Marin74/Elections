@@ -145,7 +145,8 @@
         		
                 <div class="col-md-6">
                     {% if result != null
-                        and result.scores.count > 0 %}
+                        and result.scores.count > 0
+                        and result.votesCast > 0 %}
                         <div id="chartRound{{ loop.index }}" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
                     {% endif %}
                 </div>
@@ -162,7 +163,7 @@
 <script type="text/javascript">
     {% if election is not null %}
         {% for result in results %}
-        	{% if result != null %}
+        	{% if result != null and result.votesCast > 0 %}
                 $(function () {
                     // Create the chart
                     $('#chartRound{{ loop.index }}').highcharts({
@@ -202,7 +203,7 @@
 
 									{% set iScores = iScores + 1 %}
                                     {% set totalVoices = totalVoices + score.voices %}
-                                	
+                                    
                                     {% if (score.voices*100/result.votesCast) >= resultMin or (iScores == result.scores|length and smallCandidates == 0) %}
                                         {
                                         	color: '{{ score.candidacy.nuance.color }}',

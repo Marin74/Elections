@@ -167,13 +167,15 @@ class DefaultController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoElection = $em->getRepository("AppBundle:Election");
+    	$repoResultCity = $em->getRepository("AppBundle:ResultCity");
     	$repoResultDepartment = $em->getRepository("AppBundle:ResultDepartment");
     	$election = $repoElection->find($request->get("election_id"));
     	$previousElection = null;
     	$nextElection = null;
     	$results = array();
-    	
+    	$resultsCity = array();
     	$department = null;
+    	
     	if(!empty($request->get('department_code'))) {
     		$departmentCode = $request->get('department_code');
     		if($this->startsWith($departmentCode, "0")) {
@@ -199,6 +201,16 @@ class DefaultController extends Controller
     		->getResult();
     		
     		if(count($election->getRounds()) != 0) {
+				
+	    		$resultsCity = $repoResultCity->createQueryBuilder("rc")
+	    		->join("rc.city", "c")
+	    		->select("rc")
+	    		->where("c.department = :department")
+	    		->andWhere("rc.round = :round")
+	    		->setParameter("round", $election->getRounds()[1])
+	    		->setParameter("department", $department)
+	    		->getQuery()
+	    		->getResult();
     			
     			$previousElection = $repoElection->createQueryBuilder("e")
     			->join("e.rounds", "r")
@@ -243,6 +255,7 @@ class DefaultController extends Controller
     		'department'		=> $department,
     		'election'			=> $election,
     		'results'			=> $results,
+    		'resultsCity'		=> $resultsCity,
     		'previousElection'	=> $previousElection,
     		'nextElection'		=> $nextElection
     	));
@@ -253,12 +266,59 @@ class DefaultController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoCity = $em->getRepository("AppBundle:City");
     	$repoElection = $em->getRepository("AppBundle:Election");
+    	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoResultCity = $em->getRepository("AppBundle:ResultCity");
-    	$city = $repoCity->find($request->get("city_id"));
     	$election = $repoElection->find($request->get("election_id"));
     	$previousElection = null;
     	$nextElection = null;
     	$results = array();
+    	$city = null;
+    	
+    	if(!empty($request->get('city_code'))) {
+			
+    		$cityCode = $request->get('city_code');
+    		
+    		// Get department code
+    		$departmentCode = substr($cityCode, 0, 2);
+    		if($this->startsWith($cityCode, "0")) {
+    			$departmentCode = substr($departmentCode, 1, strlen($departmentCode)-1);
+    		}
+    		
+    		$department = $repoDepartment->findOneByDep($departmentCode);
+    		
+    		if($department != null) {
+    			
+    			$cityCode = substr($cityCode, 2);
+    			
+    			// Get city code
+    			if($this->startsWith($cityCode, "0")) {
+    				$cityCode = substr($cityCode, 1, strlen($cityCode)-1);
+    				 
+    				if($this->startsWith($cityCode, "0")) {
+    					$cityCode = substr($cityCode, 1, strlen($cityCode)-1);
+    				}
+    			}
+    			
+    			//$city = $repoCity->findOneBy(array("department" => $department, "com" => $cityCode));
+    			
+    			// Search city
+    			$query = $repoCity->createQueryBuilder('c');
+    			$query->where($query->expr()->notIn("c.actual", ":actual"))
+    			->andWhere($query->expr()->eq("c.department", ":department"))
+    			->andWhere($query->expr()->eq("c.com", ":com"))
+    			->setParameter('actual', array(City::ACTUAL_ANCIEN_CODE_CHGT_DEP, City::ACTUAL_FRACTION_CANTONALE))
+    			->setParameter("department", $department)
+    			->setParameter("com", $cityCode);
+    			
+				$cities = $query->getQuery()->getResult();
+				
+				if(count($cities) > 0) {
+					$city = $cities[0];
+				}
+    		}
+    	}
+    	else
+    		$city = $repoCity->find($request->get("city_id"));
     	
     	if($city != null && $election != null) {
 

@@ -157,6 +157,11 @@ class ResultCity extends Result
     	return $this->round;
     }
 
+    public function getCity()
+    {
+    	return $this->city;
+    }
+
     public function getScores()
     {
     	return $this->scores;
