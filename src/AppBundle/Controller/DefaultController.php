@@ -149,12 +149,27 @@ class DefaultController extends Controller
     	// Redirect to the latest election
     	if($city != null) {
     		
-    		if(count($city->getResults()) > 0)
+    		if(count($city->getResults()) > 0) {
+    			
+    			// Get the most recent election
+    			$election = null;
+    			$electionDate = null;
+    			
+    			foreach($city->getResults() as $result) {
+    				
+    				if($election == null || $result->getRound()->getDate() > $electionDate) {
+    					
+    					$election = $result->getRound()->getElection();
+    					$electionDate = $result->getRound()->getDate();
+    				}
+    			}
+    			
     			return $this->redirectToRoute("app_election_city", array(
-    					"election_id"	=> $city->getResults()[count($city->getResults())-1]->getRound()->getElection()->getId(),
+    					"election_id"	=> $election->getId(),
     					"city_id"		=> $city->getId()
     				)
     			);
+    		}
     	}
     	 
     	return $this->render('AppBundle:Default:city.html.twig', array(
