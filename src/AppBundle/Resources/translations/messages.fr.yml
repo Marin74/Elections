@@ -93,3 +93,4 @@ contact_hint: Vous aimez ce site ou souhaitez faire des remarques d'amélioratio
 email: Email
 message: Message
 send: Envoyer
+title_app_name: "%app_name% : %title%"

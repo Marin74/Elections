@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+	{% if election is not null and department is not null %}
+        {{ "election_department"|trans({"%election%": election.name, "%department%": department.name}) }}
+    {% else %}
+	    {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block body %}
 <div class="container">
 	<ol class="breadcrumb">

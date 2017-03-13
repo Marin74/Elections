@@ -1,5 +1,13 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+	{% if city is not null %}
+	    {{ city.fullName }}
+    {% else %}
+	    {{ parent() }}
+    {% endif %}
+{% endblock %}
+
 {% block body %}
 <div class="container">
     <div class="col-md-6">
