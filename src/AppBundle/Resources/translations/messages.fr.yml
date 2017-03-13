@@ -1,8 +1,6 @@
-app:
-    name: Élections
 search: Rechercher
 search_item: Rechercher une élection, un territoire (commune, département...)
-list: Liste
+list: Historique
 unknown_election: Élection inconnue
 round_1: Premier tour
 round_2: Second tour

@@ -38,6 +38,8 @@ twig:
     strict_variables: "%kernel.debug%"
     globals:
         mapbox_access_token: "%mapbox_access_token%"
+        piwik_url: "%piwik_url%"
+        app_name: "%app_name%"
     date:
         timezone: "%timezone%"
     number_format:
@@ -76,3 +78,12 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+    
+fos_user:
+    db_driver: orm # other valid values are 'mongodb' and 'couchdb'
+    firewall_name: main
+    user_class: AppBundle\Entity\User
+# from_email param below: The default email address to use when the bundle send a registration confirmation to the user.
+#    from_email:
+#        address: "%mailer_user%"
+#        sender_name: "%mailer_user%"
