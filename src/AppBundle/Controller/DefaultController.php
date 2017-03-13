@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ElectionType;
 use AppBundle\Entity\City;
 use AppBundle\Entity\Department;
+use AppBundle\Entity\ResultDepartment;
 
 class DefaultController extends Controller
 {
@@ -14,7 +15,13 @@ class DefaultController extends Controller
     {
     	$em = $this->getDoctrine()->getManager();
     	$repoElectionRound = $em->getRepository("AppBundle:ElectionRound");
-    	$round = $repoElectionRound->findOneBy(array(), array("date" => "DESC"));
+    	$roundNumber = $request->get("roundNumber");
+    	$round = null;
+    	if(!empty($roundNumber))
+    		$round = $repoElectionRound->findOneBy(array("roundNumber" => $roundNumber), array("date" => "DESC"));
+    	
+    	if($round == null)
+    		$round = $repoElectionRound->findOneBy(array(), array("date" => "DESC"));
     	
         return $this->render('AppBundle:Default:index.html.twig', array(
         	'round'	=> $round
@@ -40,6 +47,7 @@ class DefaultController extends Controller
     	$election = null;
     	$previousElection = null;
     	$nextElection = null;
+    	$resultsDepartment = array();
     	
     	if(!empty($electionId)) {
     		$election = $repoElection->find($electionId);
@@ -75,11 +83,30 @@ class DefaultController extends Controller
 	    			->setMaxResults(1)
 	    			->getQuery()
 	    			->getOneOrNullResult();
+	    		
+	    		$roundNumber = $request->get("roundNumber");
+	    		
+	    		if(!empty($roundNumber)) {
+	    			
+	    			foreach($election->getRounds() as $round) {
+	    				
+	    				if($round->getRoundNumber() == intval($roundNumber)) {
+	    					
+	    					$resultsDepartment = $round->getResultsDepartment();
+	    					break;
+	    				}
+	    			}
+	    		}
+	    		
+	    		if(count($resultsDepartment) == 0) {
+	    			$resultsDepartment = $election->getRounds()[0]->getResultsDepartment();
+	    		}
     		}
     	}
     	
         return $this->render('AppBundle:Default:election.html.twig', array(
         	'election'			=> $election,
+        	'resultsDepartment'	=> $resultsDepartment,
         	'previousElection'	=> $previousElection,
         	'nextElection'		=> $nextElection
         ));
@@ -89,10 +116,16 @@ class DefaultController extends Controller
     {
     	$em = $this->getDoctrine()->getManager();
     	$repoCity = $em->getRepository("AppBundle:City");
+    	$repoDepartment = $em->getRepository("AppBundle:Department");
+    	$repoElection = $em->getRepository("AppBundle:Election");
     	$search = trim($request->get("search"));
-    	$results = array();
+    	$cities = array();
+    	$departments = array();
+    	$elections = array();
     	
     	if(!empty($search)) {
+    		
+    		// Cities
     		$query = $repoCity->createQueryBuilder('c');
     		$query
     		->where($query->expr()->notIn("c.actual", ":actual"))
@@ -106,15 +139,43 @@ class DefaultController extends Controller
     		->setParameter('search', '%'.$search.'%')
     		->setParameter('actual', array(City::ACTUAL_ANCIEN_CODE_CHGT_DEP, City::ACTUAL_FRACTION_CANTONALE));
     		
-    		$results = $query->getQuery()->getResult();
+    		$cities = $query->getQuery()->getResult();
+			
+    		// Departments
+    		$query = $repoDepartment->createQueryBuilder('d');
+    		$query
+    		->where($query->expr()->like("replace(d.nccenr, '-', ' ')", "replace(:search, '-', ' ')"))
+    		->orderBy('d.nccenr', 'ASC')
+    		->setParameter('search', '%'.$search.'%');
     		
-    		if(count($results) == 1) {
-    			return $this->redirectToRoute("app_city", array("id" => $results[0]->getId()));
+    		$departments = $query->getQuery()->getResult();
+			
+    		// Elections
+    		$query = $repoElection->createQueryBuilder('e');
+    		$query
+    		->where($query->expr()->like("e.name", ":search"))
+    		->orderBy('e.name', 'DESC')
+    		->setParameter('search', '%'.$search.'%');
+    		
+    		$elections = $query->getQuery()->getResult();
+    		
+
+
+    		if(count($cities) == 1 && count($departments) == 0 && count($elections) == 0) {
+    			return $this->redirectToRoute("app_city", array("id" => $cities[0]->getId()));
+    		}
+    		elseif(count($cities) == 0 && count($departments) == 1 && count($elections) == 0) {
+    			return $this->redirectToRoute("app_department", array("id" => $departments[0]->getId()));
+    		}
+    		elseif(count($cities) == 0 && count($departments) == 0 && count($elections) == 1) {
+    			return $this->redirectToRoute("app_election", array("id" => $elections[0]->getId()));
     		}
     	}
 		
     	return $this->render('AppBundle:Default:search.html.twig', array(
-    		'results'	=> $results
+    		'cities'		=> $cities,
+    		'departments'	=> $departments,
+    		'elections'		=> $elections
     	));
     }
 
@@ -127,12 +188,27 @@ class DefaultController extends Controller
     	// Redirect to the latest election
     	if($department != null) {
     		
-    		if(count($department->getResults()) > 0)
+    		if(count($department->getResults()) > 0) {
+    			
+    			// Get the most recent election
+    			$election = null;
+    			$electionDate = null;
+    			 
+    			foreach($department->getResults() as $result) {
+    			
+    				if($election == null || $result->getRound()->getDate() > $electionDate) {
+    						
+    					$election = $result->getRound()->getElection();
+    					$electionDate = $result->getRound()->getDate();
+    				}
+    			}
+    			 
     			return $this->redirectToRoute("app_election_department", array(
-    					"election_id"	=> $department->getResults()[count($department->getResults())-1]->getRound()->getElection()->getId(),
-    					"department_id"		=> $department->getId()
-    				)
-    			);
+						"election_id"	=> $election->getId(),
+						"department_id"	=> $department->getId()
+					)
+				);
+    		}
     	}
     	 
     	return $this->render('AppBundle:Default:department.html.twig', array(
@@ -182,6 +258,7 @@ class DefaultController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoElection = $em->getRepository("AppBundle:Election");
+    	$repoElectionRound = $em->getRepository("AppBundle:ElectionRound");
     	$repoResultCity = $em->getRepository("AppBundle:ResultCity");
     	$repoResultDepartment = $em->getRepository("AppBundle:ResultDepartment");
     	$election = $repoElection->find($request->get("election_id"));
@@ -216,16 +293,38 @@ class DefaultController extends Controller
     		->getResult();
     		
     		if(count($election->getRounds()) != 0) {
+    			
+    			$roundNumber = $request->get("roundNumber");
+    			
+    			if(!empty($roundNumber)) {
+    				
+    				$round = $repoElectionRound->findOneBy(array("election" => $election, "roundNumber" => $roundNumber));
+    				
+    				if($round != null) {
+	    				$resultsCity = $repoResultCity->createQueryBuilder("rc")
+	    				->join("rc.city", "c")
+	    				->select("rc")
+	    				->where("c.department = :department")
+	    				->andWhere("rc.round = :round")
+	    				->setParameter("round", $round)
+	    				->setParameter("department", $department)
+	    				->getQuery()
+	    				->getResult();
+    				}
+    			}
 				
-	    		$resultsCity = $repoResultCity->createQueryBuilder("rc")
-	    		->join("rc.city", "c")
-	    		->select("rc")
-	    		->where("c.department = :department")
-	    		->andWhere("rc.round = :round")
-	    		->setParameter("round", $election->getRounds()[1])
-	    		->setParameter("department", $department)
-	    		->getQuery()
-	    		->getResult();
+    			if(count($resultsCity) == 0) {
+    				
+    				$resultsCity = $repoResultCity->createQueryBuilder("rc")
+    				->join("rc.city", "c")
+    				->select("rc")
+    				->where("c.department = :department")
+    				->andWhere("rc.round = :round")
+    				->setParameter("round", $election->getRounds()[0])
+    				->setParameter("department", $department)
+    				->getQuery()
+    				->getResult();
+    			}
     			
     			$previousElection = $repoElection->createQueryBuilder("e")
     			->join("e.rounds", "r")

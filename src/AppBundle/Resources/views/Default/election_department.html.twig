@@ -36,6 +36,18 @@
 	{% else %}
 		<h3>{{ "election_department"|trans({"%election%": election.name, "%department%": department.name}) }}</h3>
 		
+		{% if election.rounds|length > 0 %}
+    		<p>
+        		<center>
+        			<div class="btn-group" role="group" aria-label="">
+        				{% for round in election.rounds %}
+    						<a type="button" class="btn btn-default {% if resultsCity|length > 0 and resultsCity[0].round.id == round.id %}active{% endif %}" href="{{ url("app_election_department", {"election_id": election.id, "department_id": department.id, "roundNumber": round.roundNumber}) }}">{{ ("round_"~round.roundNumber)|trans }}</a>
+    					{% endfor %}
+    				</div>
+        		</center>
+    		</p>
+		{% endif %}
+		
 		<div id="mapid" style="height: 300px; margin: 0 auto"></div>
 		
 		{% for result in results %}

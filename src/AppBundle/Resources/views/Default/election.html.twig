@@ -32,6 +32,20 @@
     	{% if election.description is not empty %}
     		<p>{{ election.description }}</p>
     	{% endif %}
+		
+		{% if resultsDepartment|length > 0 %}
+    		<p>
+        		<center>
+        			<div class="btn-group" role="group" aria-label="">
+        				{% for tempRound in election.rounds %}
+    						<a type="button" class="btn btn-default {% if tempRound.id == resultsDepartment[0].round.id %}active{% endif %}" href="{{ url("app_election", {"id": election.id, "roundNumber": tempRound.roundNumber}) }}">{{ ("round_"~tempRound.roundNumber)|trans }}</a>
+    					{% endfor %}
+    				</div>
+        		</center>
+    		</p>
+			
+			<div id="mapid" style="height: 300px; margin: 0 auto"></div>
+		{% endif %}
     	
     	{% for round in election.rounds %}
     		<hr>
@@ -190,6 +204,176 @@
 {% block js %}
 <script type="text/javascript">
     {% if election is not null %}
+
+    	{% if resultsDepartment|length > 0 %}
+         	// Set map
+            var map = L.map('mapid').setView([47.665387356326534, 2.70263671875], 5);
+            
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={{ mapbox_access_token }}', {
+                maxZoom: 18,
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                id: 'mapbox.light'
+            }).addTo(map);
+            
+            map.attributionControl.addAttribution('{{ "data_copyright"|trans }} <a href="{{ "data_source_website"|trans }}">{{ "data_source_name"|trans }}</a>');
+        
+            // Prevent the zoom when we scroll the webpage
+            map.scrollWheelZoom.disable();
+        	
+        	
+            // Control that shows state info on hover
+            var info = L.control();
+            
+            info.onAdd = function (map) {
+        		this._div = L.DomUtil.create('div', 'info');
+        		this.update();
+        		return this._div;
+            };
+            
+            info.update = function (props) {
+            	
+        		var name1 = "";
+        		var result1 = "";
+        		var color1 = "";
+        		var name2 = "";
+        		var result2 = "";
+        		var color2 = "";
+        		var area = "";
+        		
+            	if(props != null) {
+        	        {% for result in resultsDepartment %}
+                        
+            	        {% set departmentCode = result.department.dep %}
+                        {% if departmentCode|number_format < 10 and departmentCode != "2A" and departmentCode != "2B" %}
+            				{% set departmentCode = "0" ~ departmentCode %}
+                        {% endif %}
+                        
+            			if(props.code == '{{ departmentCode }}') {
+            	            {% if result.scores|length > 0 %}
+            	                {% if result.votesCast > 0 %}
+                					name1 = '{{ result.scores.first.candidacy.candidate.reverseName }}'
+                					result1 = "{{ (result.scores.first.voices*100/result.votesCast)|number_format(2) }}"
+            						color1 = "{{ result.scores.first.candidacy.nuance.color }}"
+        						{% endif %}
+                    			
+            	                {% if result.scores|length > 1 and result.votesCast > 0 %}
+            						name2 = '{{ result.scores[1].candidacy.candidate.reverseName }}'
+            						result2 = "{{ (result.scores[1].voices*100/result.votesCast)|number_format(2) }}"
+        							color2 = "{{ result.scores[1].candidacy.nuance.color }}"
+            	                {% endif %}
+            					area = "{{ result.department.name }}"
+            	            {% endif %}
+            			}
+        	        {% endfor %}
+        			this._div.style.color = 'black';
+        			this._div.style.backgroundColor = 'grey';
+        			this._div.style.padding = '0px 10px 5px 10px';
+        			this._div.style.borderRadius = '0.5em';
+        			this._div.style.backgroundColor = 'white';
+        		}
+            	else {
+        			this._div.style.backgroundColor = 'transparent';
+        		}
+        		
+        	    {% if resultsDepartment|length != 0 %}
+        			this._div.innerHTML = (area ? "<h5>" + area + "</h5>": "") +
+        			(props && name1 ?
+        			'<strong style="color:' + color1 + ';">' + name1 + '</strong><strong> : ' + result1 + ' %</strong><br />' +
+        			'<strong style="color:' + color2 + ';">' + name2 + '</strong> : ' + result2 + ' %'
+         			: '&nbsp;');
+                {% endif %}
+        	};
+        	
+        	info.addTo(map);
+        	
+        	
+            var district_boundary;
+        
+            // Set geojson shapes
+            $.ajax({
+                dataType: "json",
+                url: "{{ asset("bundles/app/france-geojson/departements.geojson") }}",
+                success: function(data) {
+        
+                    var multipolygon = L.geoJson(data, {
+                        style: style, onEachFeature: onEachFeature
+                    });
+        
+                    district_boundary = multipolygon.addTo(map);
+                    map.fitBounds(multipolygon.getBounds());
+                }
+            });
+        
+            // Design layout features
+            function onEachFeature(feature, layer) {
+                layer.on({
+                    mouseover: highlightFeature,
+                    mouseout: resetHighlight,
+                    click: zoomToFeature
+                });
+            }
+        
+            function resetHighlight(e) {
+                district_boundary.resetStyle(e.target);
+                info.update();
+            }
+        
+            function zoomToFeature(e) {
+            	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": election.id, "department_code": "XXX"}) }}";
+                whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
+                window.location.href = whereToGo;
+            }
+        
+            function highlightFeature(e) {
+                var layer = e.target;
+        
+                layer.setStyle({
+                    weight: 4,
+                    color: '#fff',
+                    dashArray: '',
+                    fillOpacity: 0.7
+                });
+        
+                if (!L.Browser.ie && !L.Browser.opera) {
+                    layer.bringToFront();
+                }
+        
+                info.update(layer.feature.properties);
+            }
+        
+            function style(feature) {
+        
+                return {
+                    fillColor: getColor(feature.properties.code),
+                    weight: 1,
+                    opacity: 1,
+                    color: 'white',
+                    dashArray: '3',
+                    fillOpacity: 0.7
+                };
+            }
+        
+            function getColor(d) {
+        
+        	    {% for result in resultsDepartment %}
+        			if(d == '{{ result.department.dep }}' || d == '0{{ result.department.dep }}') {
+        	            {% if result.scores|length > 0 and result.votesCast > 0 %}
+                        	return '{{ result.scores.first.candidacy.nuance.color }}';
+                    {% endif %}
+                    }
+                {% endfor %}
+            	
+                {% if resultsDepartment|length != 0 %}
+                    return 'white';
+                {% endif %}
+            	
+                return 'grey';
+            }
+		{% endif %}
+		
+    	
         {% for round in election.rounds %}
         	{% if round.resultCountry != null %}
                 $(function () {
