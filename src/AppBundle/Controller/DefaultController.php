@@ -496,6 +496,32 @@ class DefaultController extends Controller
     		'nextElection'		=> $nextElection
     	));
     }
+
+    public function contactAction(Request $request)
+    {
+		$emailAddress = $request->get("email");
+		$body = $request->get("body");
+		
+		if($request->getMethod() == "POST" && !empty(trim($emailAddress)) && !empty(trim($body))) {
+			
+			$translator = $this->get('translator');
+			
+			$appName = $this->getParameter("app_name");
+			$subject = $translator->trans("contact_subject", array("%app_name%" => $appName, "%email%" => $emailAddress));
+			
+			$email = \Swift_Message::newInstance();
+			$email->setSubject($subject);
+			$email->setFrom($emailAddress);
+			$email->setTo($this->container->getParameter("mailer_user"));
+			$email->setBody($body);
+			$email->setContentType("text/html");
+			$this->get("mailer")->send($email);
+			
+			$this->get("session")->getFlashBag()->add("success", $translator->trans("mail_sent"));
+		}
+		
+		return $this->render('AppBundle:Default:contact.html.twig');
+    }
     
     private function startsWith($haystack, $needle)
 	{

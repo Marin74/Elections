@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-6">
+        <h3>
+            {{ "contact"|trans }}
+        </h3>
+        
+        <p>
+        	{{ "contact_hint"|trans }}
+        </p>
+        
+		{% for flashMessage in app.session.flashbag.get("success") %}
+			<div class="alert alert-dismissible alert-success" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Fermer"></button>
+				{{ flashMessage }}
+			</div>
+		{% endfor %}
+		
+		<form method="POST" action="{{ url("app_contact") }}">
+			<p><input type="email" class="form-control" name="email" placeholder="{{ "email"|trans }}" required autofocus></p>
+			<p><textarea class="form-control" name="body" placeholder="{{ "message"|trans }}" required rows="5"></textarea></p>
+			<p><button class="btn btn-success" role="button" style="text-align: center;">{{ "send"|trans }}</button></p>
+		</form>
+    </div>
+</div>	
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

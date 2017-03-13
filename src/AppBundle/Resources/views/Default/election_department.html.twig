@@ -36,7 +36,7 @@
 	{% else %}
 		<h3>{{ "election_department"|trans({"%election%": election.name, "%department%": department.name}) }}</h3>
 		
-		{% if election.rounds|length > 0 %}
+		{% if election.rounds|length > 0 and resultsCity|length > 0 %}
     		<p>
         		<center>
         			<div class="btn-group" role="group" aria-label="">
@@ -46,9 +46,9 @@
     				</div>
         		</center>
     		</p>
+			
+			<div id="mapid" style="height: 300px; margin: 0 auto"></div>
 		{% endif %}
-		
-		<div id="mapid" style="height: 300px; margin: 0 auto"></div>
 		
 		{% for result in results %}
 			<hr>
@@ -171,7 +171,7 @@
 
 {% block js %}
 <script type="text/javascript">
-    {% if election is not null %}
+    {% if election is not null and resultsCity|length > 0 %}
     
         {% set departmentCode = department.dep %}
         {% if departmentCode|number_format < 10 and departmentCode != "2A" and departmentCode != "2B" %}

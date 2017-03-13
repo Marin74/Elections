@@ -86,3 +86,10 @@ unknown_department: Département inconnu
 election_round: "%election% : %round%"
 cities: Villes
 departments: Départements
+contact: Contact
+contact_subject: "%app_name% : Message de %email%"
+mail_sent: Merci pour ce mail, vous recevrez une réponse rapidement. :)
+contact_hint: Vous aimez ce site ou souhaitez faire des remarques d'améliorations ? N'hésitez pas à me contacter. :)
+email: Email
+message: Message
+send: Envoyer
