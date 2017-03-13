@@ -4,9 +4,9 @@
 <div class="container">
     <h2>{{ "search"|trans }}</h2>
     
-    <form method="post" action="{{ url("app_search") }}">
+    <form method="get" action="{{ url("app_search") }}">
         <p>
-            <input type="text" class="form-control" placeholder="{{ "search_item"|trans }}" name="search">
+            <input type="text" class="form-control" placeholder="{{ "search_item"|trans }}" name="q">
         </p>
     </form>
     

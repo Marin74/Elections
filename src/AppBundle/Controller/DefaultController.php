@@ -118,7 +118,7 @@ class DefaultController extends Controller
     	$repoCity = $em->getRepository("AppBundle:City");
     	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoElection = $em->getRepository("AppBundle:Election");
-    	$search = trim($request->get("search"));
+    	$search = trim($request->get("q"));
     	$cities = array();
     	$departments = array();
     	$elections = array();
@@ -175,7 +175,8 @@ class DefaultController extends Controller
     	return $this->render('AppBundle:Default:search.html.twig', array(
     		'cities'		=> $cities,
     		'departments'	=> $departments,
-    		'elections'		=> $elections
+    		'elections'		=> $elections,
+    		'search'		=> $search
     	));
     }
 

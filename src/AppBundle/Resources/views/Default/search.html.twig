@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ "title_app_name"|trans({"%app_name%": app_name, "%title%": "search"|trans}) }}
+	{% if search is empty %}
+	    {{ "title_app_name"|trans({"%app_name%": app_name, "%title%": "search"|trans}) }}
+	{% else %}
+	    {{ "title_search"|trans({"%app_name%": app_name, "%search%": search}) }}
+	{% endif %}
 {% endblock %}
 
 {% block body %}
