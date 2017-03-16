@@ -2,7 +2,7 @@
 
 {% block title %}
 	{% if department is not null %}
-	    {{ department.name }}
+	    {{ "title_app_name"|trans({"%app_name%": parent(), "%title%": department.name}) }}
     {% else %}
 	    {{ parent() }}
     {% endif %}
