@@ -21,7 +21,7 @@
             </h3>
             <ul>
 				{% for election in department.elections %}
-					<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": department.id}) }}">{{ election.name }}</a></li>
+					<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": department.id, "name": election.urlName~"-"~department.urlName}) }}">{{ election.name }}</a></li>
 				{% endfor %}
             </ul>
         {% endif %}

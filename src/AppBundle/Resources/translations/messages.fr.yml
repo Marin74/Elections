@@ -19,6 +19,8 @@ registered: Inscrits
 voters: Votants
 votes_cast: Suffrages exprimés
 blank_and_invalid_votes: Bulletins blancs et nuls
+blank_votes: Bulletins blancs
+invalid_votes: Bulletins nuls
 abstention: Abstention
 number: Nombre
 administration: Administration

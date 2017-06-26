@@ -23,10 +23,10 @@
 		<nav aria-label="">
 			<ul class="pager">
 				{% if previousElection is not null %}
-					<li class="previous"><a href="{{ url("app_election", {"id": previousElection.id}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
+					<li class="previous"><a href="{{ url("app_election", {"id": previousElection.id, "name": previousElection.urlName}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
 				{% endif %}
 				{% if nextElection is not null %}
-					<li class="next"><a href="{{ url("app_election", {"id": nextElection.id}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
+					<li class="next"><a href="{{ url("app_election", {"id": nextElection.id, "name": nextElection.urlName}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
 				{% endif %}
 			</ul>
 		</nav>
@@ -46,7 +46,7 @@
         		<center>
         			<div class="btn-group" role="group" aria-label="">
         				{% for tempRound in election.rounds %}
-    						<a type="button" class="btn btn-default {% if tempRound.id == resultsDepartment[0].round.id %}active{% endif %}" href="{{ url("app_election", {"id": election.id, "roundNumber": tempRound.roundNumber}) }}">{{ ("round_"~tempRound.roundNumber)|trans }}</a>
+    						<a type="button" class="btn btn-default {% if tempRound.id == resultsDepartment[0].round.id %}active{% endif %}" href="{{ url("app_election", {"id": election.id, "name": election.urlName, "roundNumber": tempRound.roundNumber}) }}">{{ ("round_"~tempRound.roundNumber)|trans }}</a>
     					{% endfor %}
     				</div>
         		</center>
@@ -102,6 +102,19 @@
                             			<td>{{ "blank_and_invalid_votes"|trans }}</td>
                             			<td>{{ resultCountry.blankAndInvalidVotes|number_format }}</td>
                             		</tr>
+                            	{% else %}
+                            		{% if resultCountry.blankVotes is not null %}
+                                		<tr>
+                                			<td>{{ "blank_votes"|trans }}</td>
+                                			<td>{{ resultCountry.blankVotes|number_format }}</td>
+                                		</tr>
+                            		{% endif %}
+                                	{% if resultCountry.invalidVotes is not null %}
+                                		<tr>
+                                			<td>{{ "invalid_votes"|trans }}</td>
+                                			<td>{{ resultCountry.invalidVotes|number_format }}</td>
+                                		</tr>
+                            		{% endif %}
                         		{% endif %}
                             	{% if resultCountry.abstention is not null %}
                             		<tr>
@@ -329,8 +342,9 @@
             }
         
             function zoomToFeature(e) {
-            	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": election.id, "department_code": "XXX"}) }}";
-                whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
+            	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": election.id, "department_code": "XXX", "name": election.urlName}) }}";
+                whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code);
+                //whereToGo = whereToGo.replace("YYY", e.target.feature.properties.name);
                 window.location.href = whereToGo;
             }
         

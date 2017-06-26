@@ -15,12 +15,12 @@
 		{% if election is null %}
 			<li class="active">{{ "unknown_election"|trans }}</li>
 		{% elseif city is null %}
-    		<li><a href="{{ url("app_election", {"id": election.id}) }}">{{ election.name }}</a></li>
+    		<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
 			<li class="active">{{ "unknown_city"|trans }}</li>
 		{% else %}
-    		<li><a href="{{ url("app_election", {"id": election.id}) }}">{{ election.name }}</a></li>
+    		<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
     		{% if city.department is not null %}
-    			<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": city.department.id}) }}">{{ city.department.name }}</a></li>
+    			<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": city.department.id, "name": election.urlName~"-"~city.department.urlName}) }}">{{ city.department.name }}</a></li>
     		{% endif %}
     		<li class="active">{{ city.fullName }}</li>
 		{% endif %}
@@ -30,10 +30,10 @@
 		<nav aria-label="">
 			<ul class="pager">
 				{% if previousElection is not null %}
-					<li class="previous"><a href="{{ url("app_election_city", {"election_id": previousElection.id, "city_id": city.id}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
+					<li class="previous"><a href="{{ url("app_election_city", {"election_id": previousElection.id, "city_id": city.id, "name": previousElection.urlName~"-"~city.urlName}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
 				{% endif %}
 				{% if nextElection is not null %}
-					<li class="next"><a href="{{ url("app_election_city", {"election_id": nextElection.id, "city_id": city.id}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
+					<li class="next"><a href="{{ url("app_election_city", {"election_id": nextElection.id, "city_id": city.id, "name": nextElection.urlName~"-"~city.urlName}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
 				{% endif %}
 			</ul>
 		</nav>
@@ -92,6 +92,19 @@
                             			<td>{{ "blank_and_invalid_votes"|trans }}</td>
                             			<td>{{ result.blankAndInvalidVotes|number_format }}</td>
                             		</tr>
+                            	{% else %}
+                            		{% if result.blankVotes is not null %}
+                                		<tr>
+                                			<td>{{ "blank_votes"|trans }}</td>
+                                			<td>{{ result.blankVotes|number_format }}</td>
+                                		</tr>
+                            		{% endif %}
+                                	{% if result.invalidVotes is not null %}
+                                		<tr>
+                                			<td>{{ "invalid_votes"|trans }}</td>
+                                			<td>{{ result.invalidVotes|number_format }}</td>
+                                		</tr>
+                            		{% endif %}
                         		{% endif %}
                             	{% if result.abstention is not null %}
                             		<tr>

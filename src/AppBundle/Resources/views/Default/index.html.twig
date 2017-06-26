@@ -150,8 +150,9 @@ $(function() {
         }
     
         function zoomToFeature(e) {
-        	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": round.election.id, "department_code": "XXX"}) }}";
-            whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code)
+        	var whereToGo = "{{ path("app_election_department_by_code", {"election_id": round.election.id, "department_code": "XXX", "name": round.election.urlName}) }}";
+            whereToGo = whereToGo.replace("XXX", e.target.feature.properties.code);
+            //whereToGo = whereToGo.replace("YYY", e.target.feature.properties.nom);
             window.location.href = whereToGo;
         }
     

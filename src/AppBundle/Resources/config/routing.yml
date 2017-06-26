@@ -9,26 +9,42 @@ app_elections:
     path:     /elections
     defaults: { _controller: "AppBundle:Default:elections" }
 app_election:
-    path:     /election/{id}
+    path:     /election/{id}/{name}
     defaults: { _controller: "AppBundle:Default:election" }
+    requirements:
+        id: '\d+'
 app_election_department:
-    path:     /election/{election_id}/departement/{department_id}
+    path:     /election/{election_id}/departement/{department_id}/{name}
     defaults: { _controller: "AppBundle:Default:electionDepartment" }
+    requirements:
+        election_id: '\d+'
+        department_id: '\d+'
 app_election_department_by_code:
-    path:     /election/{election_id}/departement/code/{department_code}
+    path:     /election/{election_id}/departement/code/{department_code}/{name}
     defaults: { _controller: "AppBundle:Default:electionDepartment" }
+    requirements:
+        election_id: '\d+'
 app_election_city:
-    path:     /election/{election_id}/ville/{city_id}
+    path:     /election/{election_id}/ville/{city_id}/{name}
     defaults: { _controller: "AppBundle:Default:electionCity" }
+    requirements:
+        election_id: '\d+'
+        city_id: '\d+'
 app_election_city_by_code:
-    path:     /election/{election_id}/ville/code/{city_code}
+    path:     /election/{election_id}/ville/code/{city_code}/{name}
     defaults: { _controller: "AppBundle:Default:electionCity" }
+    requirements:
+        election_id: '\d+'
 app_department:
-    path:     /departement/{id}
+    path:     /departement/{id}/{name}
     defaults: { _controller: "AppBundle:Default:department" }
+    requirements:
+        id: '\d+'
 app_city:
-    path:     /ville/{id}
+    path:     /ville/{id}/{name}
     defaults: { _controller: "AppBundle:Default:city" }
+    requirements:
+        id: '\d+'
 app_contact:
     path:     /contact
     defaults: { _controller: "AppBundle:Default:contact" }
@@ -38,6 +54,8 @@ app_admin:
 app_admin_candidate:
     path:     /admin/candidat/{id}
     defaults: { _controller: "AppBundle:Admin:candidate" }
+    requirements:
+        id: '\d+'
 app_admin_candidates:
     path:     /admin/candidats
     defaults: { _controller: "AppBundle:Admin:candidates" }
@@ -47,6 +65,8 @@ app_admin_elections:
 app_admin_election:
     path:     /admin/election/{id}
     defaults: { _controller: "AppBundle:Admin:election" }
+    requirements:
+        id: '\d+'
 app_admin_nuances:
     path:     /admin/nuances
     defaults: { _controller: "AppBundle:Admin:nuances" }

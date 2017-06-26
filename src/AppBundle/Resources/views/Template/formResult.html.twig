@@ -48,6 +48,26 @@
 </div>
 <div class="form-group">
 
+    {{ form_label(form.blankVotes, "blank_votes", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+	
+    <div class="col-sm-10">
+        {{ form_errors(form.blankVotes) }}
+
+        {{ form_widget(form.blankVotes, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+<div class="form-group">
+
+    {{ form_label(form.invalidVotes, "invalid_votes", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+	
+    <div class="col-sm-10">
+        {{ form_errors(form.invalidVotes) }}
+
+        {{ form_widget(form.invalidVotes, {'attr': {'class': 'form-control'}}) }}
+    </div>
+</div>
+<div class="form-group">
+
     {{ form_label(form.votesCast, "votes_cast", {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
 	
     <div class="col-sm-10">

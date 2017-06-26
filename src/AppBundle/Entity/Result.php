@@ -50,6 +50,20 @@ abstract class Result
     /**
      * @var int
      *
+     * @ORM\Column(name="blankVotes", type="integer", nullable=true)
+     */
+    protected $blankVotes;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="invalidVotes", type="integer", nullable=true)
+     */
+    protected $invalidVotes;
+
+    /**
+     * @var int
+     *
      * @ORM\Column(name="votesCast", type="integer", nullable=true)
      */
     protected $votesCast;
@@ -159,6 +173,54 @@ abstract class Result
     public function getBlankAndInvalidVotes()
     {
         return $this->blankAndInvalidVotes;
+    }
+
+    /**
+     * Set blankVotes
+     *
+     * @param integer $blankVotes
+     *
+     * @return Result
+     */
+    public function setBlankVotes($blankVotes)
+    {
+        $this->blankVotes = $blankVotes;
+
+        return $this;
+    }
+
+    /**
+     * Get blankVotes
+     *
+     * @return int
+     */
+    public function getBlankVotes()
+    {
+        return $this->blankVotes;
+    }
+
+    /**
+     * Set invalidVotes
+     *
+     * @param integer $invalidVotes
+     *
+     * @return Result
+     */
+    public function setInvalidVotes($invalidVotes)
+    {
+        $this->invalidVotes = $invalidVotes;
+
+        return $this;
+    }
+
+    /**
+     * Get invalidVotes
+     *
+     * @return int
+     */
+    public function getInvalidVotes()
+    {
+        return $this->invalidVotes;
     }
 
     /**

@@ -162,13 +162,13 @@ class DefaultController extends Controller
 
 
     		if(count($cities) == 1 && count($departments) == 0 && count($elections) == 0) {
-    			return $this->redirectToRoute("app_city", array("id" => $cities[0]->getId()));
+    			return $this->redirectToRoute("app_city", array("id" => $cities[0]->getId(), "name" => $cities[0]->getURLName()));
     		}
     		elseif(count($cities) == 0 && count($departments) == 1 && count($elections) == 0) {
-    			return $this->redirectToRoute("app_department", array("id" => $departments[0]->getId()));
+    			return $this->redirectToRoute("app_department", array("id" => $departments[0]->getId(), "name" => $departments[0]->getURLName()));
     		}
     		elseif(count($cities) == 0 && count($departments) == 0 && count($elections) == 1) {
-    			return $this->redirectToRoute("app_election", array("id" => $elections[0]->getId()));
+    			return $this->redirectToRoute("app_election", array("id" => $elections[0]->getId(), "name" => $elections[0]->getURLName()));
     		}
     	}
 		
@@ -206,7 +206,8 @@ class DefaultController extends Controller
     			 
     			return $this->redirectToRoute("app_election_department", array(
 						"election_id"	=> $election->getId(),
-						"department_id"	=> $department->getId()
+						"department_id"	=> $department->getId(),
+    					"name"			=> $election->getURLName()."-".$department->getURLName()
 					)
 				);
     		}
@@ -243,7 +244,8 @@ class DefaultController extends Controller
     			
     			return $this->redirectToRoute("app_election_city", array(
     					"election_id"	=> $election->getId(),
-    					"city_id"		=> $city->getId()
+    					"city_id"		=> $city->getId(),
+    					"name"			=> $election->getURLName()."-".$city->getURLName()
     				)
     			);
     		}
