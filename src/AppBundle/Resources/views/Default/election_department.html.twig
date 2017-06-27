@@ -372,108 +372,108 @@
                 return 'grey';
             }
         });
+    {% endif %}
 
-    	// Init charts
-        {% for result in results %}
-        	{% if result != null %}
-                $(function () {
-                    // Create the chart
-                    $('#chartRound{{ loop.index }}').highcharts({
-                        chart: {
-                            type: 'pie'
-                        },
-                        title: {
-                            text: '{{ "results"|trans }}'
-                        },
-                        subtitle: {
-                            text: '{{ ("round_"~result.round.roundNumber)|trans }}'
-                        },
-                        plotOptions: {
-                            series: {
-                                dataLabels: {
-                                    enabled: true,
-                                    format: '{point.name} : {point.y:.1f} %'
-                                }
+	// Init charts
+    {% for result in results %}
+    	{% if result != null %}
+            $(function () {
+                // Create the chart
+                $('#chartRound{{ loop.index }}').highcharts({
+                    chart: {
+                        type: 'pie'
+                    },
+                    title: {
+                        text: '{{ "results"|trans }}'
+                    },
+                    subtitle: {
+                        text: '{{ ("round_"~result.round.roundNumber)|trans }}'
+                    },
+                    plotOptions: {
+                        series: {
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.name} : {point.y:.1f} %'
                             }
-                        },
-            
-                        tooltip: {
-                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                            pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/><span style="font-size:11px"><em>{point.nuance}</em></span><br/>'
-                        },
-                        series: [{
-                            name: '{{ "candidate"|trans }}',
-                            colorByPoint: true,
-                            data: [
-            
-                                {% set resultMin = 5 %}
-                                {% set smallCandidates = 0 %}
-                                {% set totalVoices = 0 %}
-                                {% set iScores = 0 %}
-            
-                                {% for score in result.scores %}
+                        }
+                    },
+        
+                    tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/><span style="font-size:11px"><em>{point.nuance}</em></span><br/>'
+                    },
+                    series: [{
+                        name: '{{ "candidate"|trans }}',
+                        colorByPoint: true,
+                        data: [
+        
+                            {% set resultMin = 5 %}
+                            {% set smallCandidates = 0 %}
+                            {% set totalVoices = 0 %}
+                            {% set iScores = 0 %}
+        
+                            {% for score in result.scores %}
 
-									{% set iScores = iScores + 1 %}
-                                    {% set totalVoices = totalVoices + score.voices %}
-                                	
-                                    {% if (score.voices*100/result.votesCast) >= resultMin or (iScores == result.scores|length and smallCandidates == 0) %}
-                                        {
-                                        	color: '{{ score.candidacy.nuance.color }}',
-                                            name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname  }}',
-                                            y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
-                                            nuance: '{{ score.candidacy.nuance.name }}',
-                                            drilldown: null
-                                        },
-                                    {% else %}
-                                        {% set smallCandidates = smallCandidates + (score.voices*100/result.votesCast) %}
-                                    {% endif %}
-                                {% endfor %}
-
-                                {% if totalVoices != result.votesCast %}
+								{% set iScores = iScores + 1 %}
+                                {% set totalVoices = totalVoices + score.voices %}
+                            	
+                                {% if (score.voices*100/result.votesCast) >= resultMin or (iScores == result.scores|length and smallCandidates == 0) %}
                                     {
-                                    	color: 'grey',
-                                        name: '{{ "various"|trans }}',
-                                        y: {{ ((result.votesCast - totalVoices)*100/result.votesCast)|number_format(2, null, " ") }},
+                                    	color: '{{ score.candidacy.nuance.color }}',
+                                        name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname  }}',
+                                        y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
+                                        nuance: '{{ score.candidacy.nuance.name }}',
                                         drilldown: null
                                     },
+                                {% else %}
+                                    {% set smallCandidates = smallCandidates + (score.voices*100/result.votesCast) %}
                                 {% endif %}
-            
-                                {% if smallCandidates != 0 %}
-                                    {
-                                        name: '{{ "other_candidates"|trans }}',
-                                        y: {{ smallCandidates|number_format(2, null, " ") }},
-                                        drilldown: 'other'
-                                    },
-                                {% endif %}
-                            ]
-                        }],
-                        drilldown: {
-                            series: [
-                                {% if smallCandidates != 0 %}
-                                    {
-                                        name: '{{ "other_candidates"|trans }}',
-                                        id: 'other',
-                                        data: [
-                                            {% for score in result.scores %}
-                                                {% if (score.voices*100/result.votesCast) < resultMin %}
-                                                    {
-                                                    	color: '{{ score.candidacy.nuance.color }}',
-                                                        name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
-                                                        y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
-                                                        nuance: '{{ score.candidacy.nuance.name }}',
-                                                        drilldown: null
-                                                    },
-                                                {% endif %}
-                                            {% endfor %}
-                                        ]
-                                    },
-                                {% endif %}
-                            ]
-                        }
-                    });
+                            {% endfor %}
+
+                            {% if totalVoices != result.votesCast %}
+                                {
+                                	color: 'grey',
+                                    name: '{{ "various"|trans }}',
+                                    y: {{ ((result.votesCast - totalVoices)*100/result.votesCast)|number_format(2, null, " ") }},
+                                    drilldown: null
+                                },
+                            {% endif %}
+        
+                            {% if smallCandidates != 0 %}
+                                {
+                                    name: '{{ "other_candidates"|trans }}',
+                                    y: {{ smallCandidates|number_format(2, null, " ") }},
+                                    drilldown: 'other'
+                                },
+                            {% endif %}
+                        ]
+                    }],
+                    drilldown: {
+                        series: [
+                            {% if smallCandidates != 0 %}
+                                {
+                                    name: '{{ "other_candidates"|trans }}',
+                                    id: 'other',
+                                    data: [
+                                        {% for score in result.scores %}
+                                            {% if (score.voices*100/result.votesCast) < resultMin %}
+                                                {
+                                                	color: '{{ score.candidacy.nuance.color }}',
+                                                    name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
+                                                    y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
+                                                    nuance: '{{ score.candidacy.nuance.name }}',
+                                                    drilldown: null
+                                                },
+                                            {% endif %}
+                                        {% endfor %}
+                                    ]
+                                },
+                            {% endif %}
+                        ]
+                    }
                 });
-			{% endif %}
-        {% endfor %}
-    {% endif %}
+            });
+		{% endif %}
+    {% endfor %}
 </script>
 {% endblock %}
