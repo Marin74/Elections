@@ -19,9 +19,18 @@ class ResultCountryFormType extends AbstractType
             ->add('registered',				IntegerType::class)
             ->add('abstention',				IntegerType::class)
 			->add('voters',					IntegerType::class)
-			->add('blankAndInvalidVotes',	IntegerType::class)
-			->add('blankVotes',				IntegerType::class)
-			->add('invalidVotes',			IntegerType::class)
+			->add('blankAndInvalidVotes',	IntegerType::class, array(
+					'required'	=> false
+				)
+			)
+			->add('blankVotes',				IntegerType::class, array(
+					'required'	=> false
+				)
+			)
+			->add('invalidVotes',			IntegerType::class, array(
+					'required'	=> false
+				)
+			)
 			->add('votesCast',				IntegerType::class)
         ;
     }
