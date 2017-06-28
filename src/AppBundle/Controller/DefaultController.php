@@ -316,17 +316,20 @@ class DefaultController extends Controller
     				}
     			}
 				
-    			if(count($resultsCity) == 0) {
-    				
+    			$i = 0;
+    			while(count($resultsCity) == 0 && $i < count($election->getRounds())) {
+    			
     				$resultsCity = $repoResultCity->createQueryBuilder("rc")
     				->join("rc.city", "c")
     				->select("rc")
     				->where("c.department = :department")
     				->andWhere("rc.round = :round")
-    				->setParameter("round", $election->getRounds()[0])
+    				->setParameter("round", $election->getRounds()[$i])// TODO
     				->setParameter("department", $department)
     				->getQuery()
     				->getResult();
+    					
+    				$i++;
     			}
     			
     			$previousElection = $repoElection->createQueryBuilder("e")
