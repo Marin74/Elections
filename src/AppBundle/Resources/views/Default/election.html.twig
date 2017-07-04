@@ -171,7 +171,7 @@
                                     <tr>
                                         <td>
                                             {% if strong %}<strong>{% endif %}
-                                                {{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}
+                                                <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.name }}</a>
                                             {% if strong %}</strong>{% endif %}
                                             <br/>
                                             <em>{{ score.candidacy.nuance.name }}</em>
@@ -195,7 +195,7 @@
                                 {% for candidacy in round.candidacies %}
                                     <tr>
                                         <td>
-                                            {{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}
+                                            {{ candidacy.candidate.name }}
                                             <br/>
                                             <em>{{ candidacy.nuance.name }}</em>
                                         </td>
@@ -441,7 +441,7 @@
                                     {% if (score.voices*100/round.resultCountry.votesCast) >= resultMin or (iScores == round.resultCountry.scores|length and smallCandidates == 0) %}
                                         {
                                         	color: '{{ score.candidacy.nuance.color }}',
-                                            name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname  }}',
+                                            name: '{{ score.candidacy.candidate.name  }}',
                                             y: {{ (score.voices*100/round.resultCountry.votesCast)|number_format(2, null, " ") }},
                                             nuance: '{{ score.candidacy.nuance.name }}',
                                             drilldown: null
@@ -480,7 +480,7 @@
                                                 {% if (score.voices*100/round.resultCountry.votesCast) < resultMin %}
                                                     {
                                                     	color: '{{ score.candidacy.nuance.color }}',
-                                                        name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
+                                                        name: '{{ score.candidacy.candidate.name }}',
                                                         y: {{ (score.voices*100/round.resultCountry.votesCast)|number_format(2, null, " ") }},
                                                         nuance: '{{ score.candidacy.nuance.name }}',
                                                         drilldown: null

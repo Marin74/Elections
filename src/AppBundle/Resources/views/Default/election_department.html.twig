@@ -144,7 +144,7 @@
                                 {% for score in result.scores %}
                                     <tr>
                                         <td>
-                                            {{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}
+                                            <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}</a>
                                             <br/>
                                             <em>{{ score.candidacy.nuance.name }}</em>
                                         </td>

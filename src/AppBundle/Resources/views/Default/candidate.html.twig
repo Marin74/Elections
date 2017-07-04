@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{% if candidate is not null %}
+	    {{ "title_app_name"|trans({"%app_name%": parent(), "%title%": candidate.name}) }}
+    {% else %}
+	    {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-6">
+        {% if candidate is null %}
+            <h3>
+                {{ "unknown_candidate"|trans }}
+            </h3>
+		{% else %}
+            <h3>
+		        {{ candidate.name }}
+            </h3>
+            {% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
+            	<p>
+            		{% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
+            	        {{ "born_in"|trans({"%date%": candidate.dateOfBirth|localizeddate("long", "none", locale)}) }}
+            	    {% endif %}
+            		{% if candidate.dateOfDeath != NULL %}
+                		{% if candidate.dateOfBirth != NULL %}
+                	        <br/>
+                	    {% endif %}
+                	    
+            	        {{ "dead_on"|trans({"%date%": candidate.dateOfDeath|localizeddate("long", "none", locale)}) }}
+            	    {% endif %}
+            	</p>
+            {% endif %}
+            <ul>
+				{% for election in candidate.elections %}
+					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+				{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>	
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

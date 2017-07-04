@@ -529,6 +529,17 @@ class DefaultController extends Controller
 		return $this->render('AppBundle:Default:contact.html.twig');
     }
     
+    public function candidateAction(Request $request)
+    {
+    	$em = $this->getDoctrine()->getManager();
+    	$repoCandidate = $em->getRepository("AppBundle:Candidate");
+    	$candidate = $repoCandidate->find($request->get("id"));
+    	
+    	return $this->render('AppBundle:Default:candidate.html.twig', array(
+    			'candidate'	=> $candidate,
+    	));
+    }
+    
     private function startsWith($haystack, $needle)
 	{
 		$length = strlen($needle);

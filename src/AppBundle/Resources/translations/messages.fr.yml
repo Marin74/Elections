@@ -99,3 +99,7 @@ title_app_name: "%app_name% : %title%"
 title_search: "%app_name% - Recherche : %search%"
 meta_description: "Consultez les résultats des élections à l’échelle nationale, d’une ville ou d’un département."
 meta_keywords: "élection, élections, résultat, résultats, politique, présidentielle, présidentielles, législative, législatives, municipale, municipales, départementale, départementales, régionale, régionales, sénatoriale, sénatoriales, histoire, historique, france, république, démocratie"
+born_in: Né(e) le %date%
+dead_on: Décédé(e) le %date%
+
+

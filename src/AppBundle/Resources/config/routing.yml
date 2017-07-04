@@ -40,6 +40,11 @@ app_department:
     defaults: { _controller: "AppBundle:Default:department" }
     requirements:
         id: '\d+'
+app_candidate:
+    path:     /candidat/{id}/{name}
+    defaults: { _controller: "AppBundle:Default:candidate" }
+    requirements:
+        id: '\d+'
 app_city:
     path:     /ville/{id}/{name}
     defaults: { _controller: "AppBundle:Default:city" }

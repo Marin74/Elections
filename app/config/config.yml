@@ -40,6 +40,7 @@ twig:
         mapbox_access_token: "%mapbox_access_token%"
         piwik_url: "%piwik_url%"
         app_name: "%app_name%"
+        locale: "%locale%"
     date:
         timezone: "%timezone%"
     number_format:
@@ -87,3 +88,11 @@ fos_user:
 #    from_email:
 #        address: "%mailer_user%"
 #        sender_name: "%mailer_user%"
+    
+# Services
+services:
+    twig.extension.intl:
+       class: Twig_Extensions_Extension_Intl
+       tags:
+           - { name: twig.extension }
+
