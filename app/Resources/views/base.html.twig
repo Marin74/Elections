@@ -49,7 +49,7 @@
     <body>
 
         <!-- Fixed navbar -->
-        <nav class="navbar navbar-default navbar-fixed-top">
+        <nav class="navbar navbar-default navbar-fixed-top" style="min-height: 60px;">
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -59,12 +59,13 @@
                         <span class="icon-bar"></span>
                     </button>
                     <a class="navbar-brand" href="{{ url("app_homepage") }}">
-                        {{ app_name }}
+                        <!--{{ app_name }}-->
+                        <img src="{{ asset("bundles/app/img/logo-fr-elections.png") }}" style="display: inline-block; height: 40px; margin-top: -5px"/>
                     </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="{% if app.request.attributes.get("_route") == "app_elections" %}active{% endif %}"><a href="{{ url("app_elections") }}">{{ "history"|trans }}</a></li>
+                        <li class="{% if app.request.attributes.get("_route") == "app_elections" %}active{% endif %}"><a href="{{ url("app_elections") }}" style="margin-top: 5px;">{{ "history"|trans }}</a></li>
                         <!--<li class="{% if app.request.attributes.get("_route") == "app_contact" %}active{% endif %}"><a href="{{ url("app_contact") }}">{{ "contact"|trans }}</a></li>-->
                         <!--<li class="{% if app.request.attributes.get("_route") == "app_admin" %}active{% endif %}"><a href="{{ url("app_admin") }}">{{ "administration"|trans }}</a></li>-->
                         <!--<li><a href="#about">About</a></li>
