@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ElectionType
 {
+    const CODE_PRES = "pres";
+    const CODE_LEG = "leg";
+    
     /**
      * @var int
      *
@@ -20,6 +23,13 @@ class ElectionType
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=255, unique=true, nullable=false)
+     */
+    private $code;
 
     /**
      * @var string
@@ -43,6 +53,30 @@ class ElectionType
     public function getId()
     {
         return $this->id;
+    }
+    
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return ElectionType
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+        
+        return $this;
+    }
+    
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**

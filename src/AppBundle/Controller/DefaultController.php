@@ -540,6 +540,17 @@ class DefaultController extends Controller
     	));
     }
     
+    public function nuanceAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repoNuance = $em->getRepository("AppBundle:Nuance");
+        $nuance = $repoNuance->find($request->get("id"));
+        
+        return $this->render('AppBundle:Default:nuance.html.twig', array(
+            'nuance'	=> $nuance,
+        ));
+    }
+    
     private function startsWith($haystack, $needle)
 	{
 		$length = strlen($needle);

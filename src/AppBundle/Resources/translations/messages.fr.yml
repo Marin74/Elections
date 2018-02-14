@@ -29,6 +29,7 @@ gender_f: Femme
 candidates: Candidat(e)s
 elections: Élections
 unknown_candidate: Candidat(e) inconnu(e)
+unknown_nuance: Nuance politique inconnue
 firstname: Prénom
 lastname: Nom
 gender: Sexe
@@ -69,6 +70,7 @@ percentage: Pourcentage
 elected: Élu(e)
 second_round: (second tour)
 other_candidates: Autres candidats
+other_nuances: Autres nuances
 results: Résultats
 candidate_already_added: Candidat(e) déjà ajouté(e).
 score_already_added: Résultat déjà ajouté.

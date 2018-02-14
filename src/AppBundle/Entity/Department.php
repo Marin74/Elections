@@ -67,6 +67,11 @@ class Department
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\City",mappedBy="department")
      */
     private $cities;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\District",mappedBy="department")
+     */
+    private $districts;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDepartment",mappedBy="department")

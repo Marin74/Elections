@@ -45,6 +45,11 @@ app_candidate:
     defaults: { _controller: "AppBundle:Default:candidate" }
     requirements:
         id: '\d+'
+app_nuance:
+    path:     /nuance/{id}/{name}
+    defaults: { _controller: "AppBundle:Default:nuance" }
+    requirements:
+        id: '\d+'
 app_city:
     path:     /ville/{id}/{name}
     defaults: { _controller: "AppBundle:Default:city" }

@@ -38,6 +38,12 @@ class Candidacy
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $round;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\District",inversedBy="candidacies")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     */
+    private $district;
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreCountry",mappedBy="candidacy")
@@ -89,6 +95,18 @@ class Candidacy
     public function getRound()
     {
     	return $this->round;
+    }
+    
+    public function setDistrict(District $district)
+    {
+        $this->district = $district;
+        
+        return $this;
+    }
+    
+    public function getDistrict()
+    {
+        return $this->district;
     }
     
     public function getScores()

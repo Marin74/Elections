@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{% if nuance is not null %}
+	    {{ "title_app_name"|trans({"%app_name%": parent(), "%title%": nuance.name}) }}
+    {% else %}
+	    {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="col-md-6">
+        {% if nuance is null %}
+            <h3>
+                {{ "unknown_nuance"|trans }}
+            </h3>
+		{% else %}
+            <h3>
+		        {{ nuance.name }}
+            </h3>
+            <ul>
+				{% for election in nuance.elections %}
+					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+				{% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>	
+{% endblock %}
+{% block css %}
+{% endblock %}
+{% block js %}
+{% endblock %}

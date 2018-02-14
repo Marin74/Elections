@@ -138,5 +138,24 @@ class Nuance
     {
     	return $this->candidacies;
     }
+    
+    public function getElections()
+    {
+        $elections = array();
+        $electionsIds = array();
+        
+        foreach($this->getCandidacies() as $candidacy) {
+            
+            $election = $candidacy->getRound()->getElection();
+            
+            if(!in_array($election->getId(), $electionsIds)) {
+                
+                $electionsIds[] = $election->getId();
+                $elections[] = $election;
+            }
+        }
+        
+        return $elections;
+    }
 }
 
