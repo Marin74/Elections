@@ -35,6 +35,11 @@ app_election_city_by_code:
     defaults: { _controller: "AppBundle:Default:electionCity" }
     requirements:
         election_id: '\d+'
+app_election_district:
+    path:     /election/{election_id}/circonscription/{district_id}/{name}
+    defaults: { _controller: "AppBundle:Default:electionDistrict" }
+    requirements:
+        district_id: '\d+'
 app_department:
     path:     /departement/{id}/{name}
     defaults: { _controller: "AppBundle:Default:department" }

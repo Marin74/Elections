@@ -38,6 +38,11 @@ class District
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Candidacy",mappedBy="district")
      */
     private $candidacies;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDistrict",mappedBy="district")
+     */
+    private $results;
 
 
     /**
@@ -82,6 +87,11 @@ class District
     public function getCandidacies()
     {
         return $this->candidacies;
+    }
+    
+    public function getResults()
+    {
+        return $this->results;
     }
 }
 

@@ -221,8 +221,7 @@
                                 	
                                     <tr>
                                         <td>
-                                            {# TODO Créer une adresse pour voir l'historique des résultats par nuance #}
-                                            <a href="{{ url("app_nuance", {"id": score.nuance.id, "name": score.nuance.name}) }}">{{ score.nuance.name }}</a>
+                                            <a href="{{ url("app_nuance", {"id": score.nuance.id, "name": score.nuance.urlName}) }}">{{ score.nuance.name }}</a>
                                         </td>
                                         <td>
                                             {{ score.voices|number_format }}

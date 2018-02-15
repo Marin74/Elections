@@ -268,7 +268,6 @@ class Department
     	if(!empty($name)) {
     		$name = strtolower($this->getName());
     		
-    		$name = str_replace(" ", "-", $name);
     		$name = str_replace("'", "", $name);
     		$name = str_replace('"', "", $name);
     		$name = str_replace("/", "", $name);
@@ -329,6 +328,10 @@ class Department
             $name = str_replace("Ç", "c", $name);
             $name = str_replace("Æ", "ae", $name);
             $name = str_replace("Œ", "oe", $name);
+            
+            $name = trim($name);
+            
+            $name = str_replace(" ", "-", $name);
     		
     		while(strpos($name, "--") !== false) {
     			 
