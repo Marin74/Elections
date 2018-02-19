@@ -14,7 +14,7 @@ class ResultDistrict extends Result
 {
 
     /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ElectionRound",inversedBy="resultsDepartment")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\ElectionRound",inversedBy="resultsDistrict")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $round;
@@ -26,7 +26,7 @@ class ResultDistrict extends Result
     private $district;
 
     /**
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreDepartment",mappedBy="result")
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreDistrict",mappedBy="result")
      * @ORM\OrderBy({"voices" = "desc"})
      */
     private $scores;

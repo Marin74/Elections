@@ -80,6 +80,7 @@ no_results: Pas de résultat.
 unknown_city: Ville inconnue
 election_city: "%election% à %city%"
 election_department: "%election% : %department%"
+election_district: "%election% : %district%"
 ids_candidate_candidacy: "ID candidat : %candidate% - ID candidature : %candidacy%"
 no_result_found: Pas de résultat trouvé.
 percent_and_value: "%value% (%percent% %)"
@@ -87,6 +88,7 @@ data_copyright: Données ©
 data_source_name: Data.gouv.fr
 data_source_website: http://data.gouv.fr
 unknown_department: Département inconnu
+unknown_district: Circonscription inconnue
 election_round: "%election% : %round%"
 cities: Villes
 departments: Départements
@@ -103,5 +105,7 @@ meta_description: "Consultez les résultats des élections à l’échelle natio
 meta_keywords: "élection, élections, résultat, résultats, politique, présidentielle, présidentielles, législative, législatives, municipale, municipales, départementale, départementales, régionale, régionales, sénatoriale, sénatoriales, histoire, historique, france, république, démocratie"
 born_in: Né(e) le %date%
 dead_on: Décédé(e) le %date%
-
+first_district: 1ère circonscription
+next_district: "%number%ème circonscription"
+district: Circonscription
 

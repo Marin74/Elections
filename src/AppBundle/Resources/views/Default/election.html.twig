@@ -19,6 +19,7 @@
 		{% endif %}
 	</ol>
 	
+	{# Display previous and next elections #}
 	{% if previousElection is not null or nextElection is not null %}
 		<nav aria-label="">
 			<ul class="pager">
@@ -175,7 +176,7 @@
                                                     <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.name }}</a>
                                                 {% if strong %}</strong>{% endif %}
                                                 <br/>
-                                                <em>{{ score.candidacy.nuance.name }}</em>
+                                                <em><a href="{{ url("app_nuance", {"id": score.candidacy.nuance.id, "name": score.candidacy.nuance.urlName}) }}">{{ score.candidacy.nuance.name }}</a></em>
                                             </td>
                                             <td>
                                                 {% if strong %}<strong>{% endif %}
@@ -196,9 +197,9 @@
                                     {% for candidacy in round.candidacies %}
                                         <tr>
                                             <td>
-                                                {{ candidacy.candidate.name }}
+                                                <a href="{{ url("app_candidate", {"id": candidacy.candidate.id, "name": candidacy.candidate.urlName}) }}">{{ candidacy.candidate.name }}</a>
                                                 <br/>
-                                                <em>{{ candidacy.nuance.name }}</em>
+                                                <em><a href="{{ url("app_nuance", {"id": candidacy.nuance.id, "name": candidacy.nuance.urlName}) }}">{{ candidacy.nuance.name }}</a></em>
                                             </td>
                                             <td></td>
                                             <td></td>

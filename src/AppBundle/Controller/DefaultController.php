@@ -203,7 +203,7 @@ class DefaultController extends Controller
     					$electionDate = $result->getRound()->getDate();
     				}
     			}
-    			 
+                
     			return $this->redirectToRoute("app_election_department", array(
 						"election_id"	=> $election->getId(),
 						"department_id"	=> $department->getId(),
@@ -501,6 +501,95 @@ class DefaultController extends Controller
     		'previousElection'	=> $previousElection,
     		'nextElection'		=> $nextElection
     	));
+    }
+    
+    public function electionDistrictAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $repoDistrict = $em->getRepository("AppBundle:District");
+        $repoElection = $em->getRepository("AppBundle:Election");
+        $repoCandidacy = $em->getRepository("AppBundle:Candidacy");
+        $repoResultDistrict = $em->getRepository("AppBundle:ResultDistrict");
+        $election = $repoElection->find($request->get("election_id"));
+        $district = $repoDistrict->find($request->get("district_id"));
+        $previousElection = null;
+        $nextElection = null;
+        $results = array();
+        $candidacies = array();
+        
+        if($district != null && $election != null) {
+            
+            $results = $repoResultDistrict->createQueryBuilder("rd")
+            ->join("rd.round", "r")
+            ->select("rd")
+            ->where("r.election = :election")
+            ->andWhere("rd.district= :district")
+            ->orderBy("r.roundNumber", "DESC")
+            ->setParameter("election", $election)
+            ->setParameter("district", $district)
+            ->getQuery()
+            ->getResult();
+            
+            if(count($election->getRounds()) != 0) {
+                
+                $previousElection = $repoElection->createQueryBuilder("e")
+                ->join("e.rounds", "r")
+                ->select("e")
+                ->join("r.resultsDistrict", "rd")
+                ->where("e.type = :type")
+                ->andWhere("r.roundNumber = 1")
+                ->andWhere("rd.district= :district")
+                ->andWhere("r.date < :date")
+                ->andWhere("e != :election")
+                ->setParameter("type", $election->getType())
+                ->setParameter("district", $district)
+                ->setParameter("date", $election->getRounds()[0]->getDate())
+                ->setParameter("election", $election)
+                ->orderBy("r.date", "DESC")
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+                
+                $nextElection = $repoElection->createQueryBuilder("e")
+                ->join("e.rounds", "r")
+                ->select("e")
+                ->join("r.resultsDistrict", "rd")
+                ->where("e.type = :type")
+                ->andWhere("r.roundNumber = 1")
+                ->andWhere("rd.district= :district")
+                ->andWhere("r.date > :date")
+                ->andWhere("e != :election")
+                ->setParameter("type", $election->getType())
+                ->setParameter("district", $district)
+                ->setParameter("date", $election->getRounds()[0]->getDate())
+                ->setParameter("election", $election)
+                ->orderBy("r.date", "ASC")
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+                
+                $candidacies = $repoCandidacy->createQueryBuilder("c")
+                ->join("c.round", "r")
+                ->select("c")
+                ->where("r.election = :election")
+                ->andWhere("c.district= :district")
+                ->orderBy("r.roundNumber", "DESC")
+                ->setParameter("election", $election)
+                ->setParameter("district", $district)
+                ->getQuery()
+                ->getResult();
+            }
+            
+        }
+        
+        return $this->render('AppBundle:Default:election_district.html.twig', array(
+            'district'			=> $district,
+            'election'			=> $election,
+            'results'			=> $results,
+            'candidacies'       => $candidacies,
+            'previousElection'	=> $previousElection,
+            'nextElection'		=> $nextElection
+        ));
     }
 
     public function contactAction(Request $request)

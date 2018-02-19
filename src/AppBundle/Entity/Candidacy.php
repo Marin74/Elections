@@ -24,6 +24,7 @@ class Candidacy
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Candidate",inversedBy="candidacies")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OrderBy({"lastname" = "asc"})
      */
     private $candidate;
 

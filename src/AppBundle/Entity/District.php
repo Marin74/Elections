@@ -43,6 +43,11 @@ class District
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDistrict",mappedBy="district")
      */
     private $results;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\DistrictCity",mappedBy="district")
+     */
+    private $districtsCities;
 
 
     /**
@@ -92,6 +97,11 @@ class District
     public function getResults()
     {
         return $this->results;
+    }
+    
+    public function getDistrictsCities()
+    {
+        return $this->districtsCities;
     }
 }
 

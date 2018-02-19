@@ -65,11 +65,13 @@ class Department
 
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\City",mappedBy="department")
+     * @ORM\OrderBy({"nccenr" = "asc"})
      */
     private $cities;
     
     /**
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\District",mappedBy="department")
+     * @ORM\OrderBy({"code" = "asc"})
      */
     private $districts;
 
@@ -243,19 +245,34 @@ class Department
     	return $this->results;
     }
     
+    public function getDistricts()
+    {
+        return $this->districts;
+    }
+    
     public function getElections()
     {
-    	$elections = array();
     	$electionsIds = array();
+    	$unsortedElections = array();
     	
     	foreach($this->getResults() as $result) {
     		
     		$election = $result->getRound()->getElection();
     		
     		if(!in_array($election->getId(), $electionsIds)) {
-    			$elections[] = $election;
+    		    
     			$electionsIds[] = $election->getId();
+    			
+    			$unsortedElections[$election->getId().$election->getName()] = $election;
     		}
+    	}
+    	
+    	// Sort
+    	arsort($unsortedElections);
+    	
+    	$elections = array();
+    	foreach($unsortedElections as $key => $election) {
+    	    $elections[] = $election;
     	}
     	
     	return $elections;

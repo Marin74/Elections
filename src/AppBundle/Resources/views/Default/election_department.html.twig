@@ -23,6 +23,7 @@
 		{% endif %}
 	</ol>
 	
+	{# Display previous and next elections #}
 	{% if previousElection is not null or nextElection is not null %}
 		<nav aria-label="">
 			<ul class="pager">
@@ -147,7 +148,7 @@
                                             <td>
                                                 <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}</a>
                                                 <br/>
-                                                <em>{{ score.candidacy.nuance.name }}</em>
+                                                <em><a href="{{ url("app_nuance", {"id": score.candidacy.nuance.id, "name": score.candidacy.nuance.urlName}) }}">{{ score.candidacy.nuance.name }}</a></em>
                                             </td>
                                             <td>
                                                 {{ score.voices|number_format }}
@@ -163,9 +164,9 @@
                                     {% for candidacy in result.round.candidacies %}
                                         <tr>
                                             <td>
-                                                {{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}
+                                                <a href="{{ url("app_candidate", {"id": candidacy.candidate.id, "name": candidacy.candidate.urlName}) }}">{{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}</a>
                                                 <br/>
-                                                <em>{{ candidacy.nuance.name }}</em>
+                                                <em><a href="{{ url("app_nuance", {"id": candidacy.nuance.id, "name": candidacy.nuance.urlName}) }}">{{ candidacy.nuance.name }}</a></em>
                                             </td>
                                             <td></td>
                                             <td></td>
@@ -210,6 +211,46 @@
                 </div>
 			</div>
 	    {% endfor %}
+	    
+	    <hr>
+		<div class="row">
+	        {% if election.type.code == constant("CODE_LEG", election.type) and department.districts|length > 0 %}
+        		<div class="col-md-4">
+        			<h5>{{ "district"|trans }}</h5>
+        			{% for district in department.districts %}
+			            {# TODO Virer les majuscules et accents #}
+			            {% set districtName = "" %}
+                		
+                		{% if district.code == 1 %}
+                	    	{% set districtName = "first_district"|trans %}
+                    	{% else %}
+                    		{% set districtName = "next_district"|trans({"%number%": district.code}) %}
+                    	{% endif %}
+        				<a href="{{ url("app_election_district", {"election_id": election.id, "district_id": district.id, "name": election.urlName~"-"~districtName}) }}">
+        				    {% if district.code == 1 %}
+        				    	{{ "first_district"|trans }}<br/>
+    				    	{% else %}
+    				    		{{ "next_district"|trans({"%number%": district.code}) }}<br/>
+    				    	{% endif %}
+        				</a>
+        			{% endfor %}
+        		</div>
+    		{% endif %}
+    		
+    		{% if department.elections|length > 1 %}
+    			<div class="col-md-4">
+    				<h5>{{ "elections"|trans }}</h5>
+    				{% for tempElection in department.elections %}
+    					{% if election.id != tempElection.id %}
+            				<a href="{{ url("app_election_department", {"election_id": tempElection.id, "department_id": department.id, "name": tempElection.urlName~"-"~department.urlName}) }}">
+            				    {{ tempElection.name }}
+        					</a>
+        					<br/>
+            			{% endif %}
+            		{% endfor %}
+    			</div>
+    		{% endif %}
+		</div>
     {% endif %}
 </div>
 {% endblock %}

@@ -64,6 +64,16 @@ class ElectionRound
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDepartment",mappedBy="round")
      */
     private $resultsDepartment;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDistrict",mappedBy="round")
+     */
+    private $resultsDistrict;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ResultDistrictCity",mappedBy="round")
+     */
+    private $resultsDistrictCity;
 
 
     /**
@@ -161,6 +171,16 @@ class ElectionRound
     public function getResultsDepartment()
     {
     	return $this->resultsDepartment;
+    }
+    
+    public function getResultsDistrict()
+    {
+        return $this->resultsDistrict;
+    }
+    
+    public function getResultsDistrictCity()
+    {
+        return $this->resultsDistrictCity;
     }
 }
 

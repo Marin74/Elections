@@ -165,6 +165,11 @@ class City
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
     private $department;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\DistrictCity",mappedBy="city")
+     */
+    private $districtsCities;
 
 
     /**
@@ -664,6 +669,11 @@ class City
     public function getDepartment()
     {
     	return $this->department;
+    }
+    
+    public function getDistrictsCities()
+    {
+        return $this->districtsCities;
     }
     
     public function getURLName()
