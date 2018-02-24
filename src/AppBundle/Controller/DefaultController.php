@@ -615,8 +615,21 @@ class DefaultController extends Controller
             $district = $repoDistrict->find($request->get('district_id'));
             
             // Check if the district is one of the city's districts
-            if($district != null && $city != null && $district->getCity()->getId() != $city->getId()) {
-                $district = null;
+            if($district != null && $city != null) {
+                
+                $isTheGoodDistrict = false;
+                
+                foreach($city->getDistrictsCities() as $districtCity) {
+                    
+                    if($districtCity->getDistrict()->getId() == $district->getId()) {
+                        $isTheGoodDistrict = true;
+                        break;
+                    }
+                }
+                
+                if(!$isTheGoodDistrict) {
+                    $district = null;
+                }
             }
         }
         

@@ -45,11 +45,10 @@
 			<li class="active">{{ "unknown_city"|trans }}</li>
 		{% else %}
     		<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
-			<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": district.department.id, "name": election.urlName~"-"~district.department.urlName}) }}">{{ district.department.name }}</a></li>
+			<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": city.department.id, "name": election.urlName~"-"~city.department.urlName}) }}">{{ city.department.name }}</a></li>
     		
     		{% if district is not null %}
     			<li><a href="{{ url("app_election_district", {"election_id": election.id, "district_id": district.id, "name": election.urlName~"-"~district.department.urlName~"-"~districtName}) }}">{{ districtName }}</a></li>
-			{% else %}
 			{% endif %}
 			
 			<li class="active">{{ city.name }}</li>
@@ -62,10 +61,10 @@
 			<ul class="pager">
 			    {# TODO Virer les majuscules et accents #}
 				{% if previousElection is not null %}
-					<li class="previous"><a href="{{ url("app_election_district_city", {"election_id": previousElection.id, "district_id": district.id, "city_id": city.name, "name": previousElection.urlName~"-"~city.urlName~"-"~district.department.urlName~"-"~districtName}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
+					<li class="previous"><a href="{{ url("app_election_district_city", {"election_id": previousElection.id, "district_id": district.id, "city_id": city.id, "name": previousElection.urlName~"-"~city.urlName~"-"~district.department.urlName~"-"~districtName}) }}"><span aria-hidden="true">&larr;</span> {{ previousElection.name }}</a></li>
 				{% endif %}
 				{% if nextElection is not null %}
-					<li class="next"><a href="{{ url("app_election_district_city", {"election_id": nextElection.id, "district_id": district.id, "city_id": city.name, "name": nextElection.urlName~"-"~city.urlName~"-"~district.department.urlName~"-"~districtName}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
+					<li class="next"><a href="{{ url("app_election_district_city", {"election_id": nextElection.id, "district_id": district.id, "city_id": city.id, "name": nextElection.urlName~"-"~city.urlName~"-"~district.department.urlName~"-"~districtName}) }}">{{ nextElection.name }} <span aria-hidden="true">&rarr;</span></a></li>
 				{% endif %}
 			</ul>
 		</nav>
@@ -79,6 +78,28 @@
 	{% elseif district is null and city.districtsCities|length == 0 %}
 		<h3>{{ city.fullName }}</h3>
 		<p>{{ "unknown_district"|trans }}</p>
+	{% elseif district is null %}
+		<h3>{{ "election_district_city_without_district"|trans({"%election%": election.name, "%city%": city.fullName}) }}</h3>
+		<hr>
+		<h4>{{ "city_in_several_districts"|trans({"%city%": city.fullName, "%nb%": city.districtsCities|length}) }}</h4>
+		<ul>
+			{% for districtCity in city.districtsCities %}
+			
+				{% set tempDistrictName = "" %}
+        		
+        		{% if districtCity.district.code == 1 %}
+        	    	{% set tempDistrictName = "first_district"|trans %}
+            	{% else %}
+            		{% set tempDistrictName = "next_district"|trans({"%number%": districtCity.district.code}) %}
+            	{% endif %}
+			
+				<li>
+				    <a href="{{ url("app_election_district_city", {"election_id": election.id, "district_id": districtCity.district.id, "city_id": city.id, "name": election.urlName~"-"~city.urlName~"-"~districtCity.district.department.urlName~"-"~tempDistrictName}) }}">
+				        {{ "city_district"|trans({"%city%": city.fullName, "%district%": tempDistrictName, "%department%": city.department.name}) }}
+			        </a>
+		        </li>
+			{% endfor %}
+		</ul>
 	{% else %}
 		<h3>{{ "election_district_city"|trans({"%election%": election.name, "%department%": district.department.name, "%district%": districtName, "%city%": city.name}) }}</h3>
 		

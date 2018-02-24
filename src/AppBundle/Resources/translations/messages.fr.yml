@@ -82,6 +82,7 @@ election_city: "%election% à %city%"
 election_department: "%election% : %department%"
 election_district: "%election% : %department% - %district%"
 election_district_city: "%election% : %city% (%department% - %district%)"
+election_district_city_without_district: "%election% : %city%"
 ids_candidate_candidacy: "ID candidat : %candidate% - ID candidature : %candidacy%"
 no_result_found: Pas de résultat trouvé.
 percent_and_value: "%value% (%percent% %)"
@@ -110,4 +111,6 @@ dead_on: Décédé(e) le %date%
 first_district: 1ère circonscription
 next_district: "%number%ème circonscription"
 districts: Circonscriptions
+city_district: "%city% - %district% (%department%)"
+city_in_several_districts: "%city% appartient à %nb% circonscriptions :"
 
