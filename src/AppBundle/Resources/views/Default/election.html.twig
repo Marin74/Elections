@@ -11,6 +11,7 @@
 {% block body %}
 <div class="container">
 	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
 		<li><a href="{{ url("app_elections") }}">{{ "elections"|trans }}</a></li>
 		{% if election is null %}
 			<li class="active">{{ "unknown_election"|trans }}</li>
@@ -246,6 +247,45 @@
                 </div>
             </div>
         {% endfor %}
+	    
+	    
+	    {# Display other results #}
+	    {% if elections|length > 1 %}
+	        {# TODO Faire la même chose avec les circos #}
+    	    <hr>
+			<h5>{{ "elections"|trans }}</h5>
+    		<div class="row">
+    			
+    			{% set nbElectionsInCurrentColumn = 0 %}
+    			{% set nbMaxElectionsPerColumn = ((elections|length)/3)|round(0, 'ceil') %}
+    			
+				{# TODO Sort #}
+				{% for tempElection in elections %}
+					
+        			{% if nbElectionsInCurrentColumn == 0 %}
+        				<div class="col-md-4">
+        			{% endif %}
+        			
+		            {% set nbElectionsInCurrentColumn = nbElectionsInCurrentColumn + 1 %}
+		            
+		            {% if election.id != tempElection.id %}
+    					<a href="{{ url("app_election", {"id": tempElection.id, "name": tempElection.urlName}) }}">
+					{% endif %}
+				    {{ tempElection.name }}
+				    {% if election.id != tempElection.id %}
+						</a>
+					{% endif %}
+					
+					<br/>
+					
+        			{% if nbElectionsInCurrentColumn == nbMaxElectionsPerColumn %}
+        				
+        			    {% set nbElectionsInCurrentColumn = 0 %}
+						</div>
+        			{% endif %}
+        		{% endfor %}
+    		</div>
+		{% endif %}
     {% endif %}
 </div>
 {% endblock %}

@@ -10,35 +10,46 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
-        {% if candidate is null %}
-            <h3>
-                {{ "unknown_candidate"|trans }}
-            </h3>
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		{% if candidate is null %}
+			<li class="active">{{ "unknown_candidate"|trans }}</li>
 		{% else %}
-            <h3>
-		        {{ candidate.name }}
-            </h3>
-            {% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
-            	<p>
-            		{% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
-            	        {{ "born_in"|trans({"%date%": candidate.dateOfBirth|localizeddate("long", "none", locale)}) }}
-            	    {% endif %}
-            		{% if candidate.dateOfDeath != NULL %}
-                		{% if candidate.dateOfBirth != NULL %}
-                	        <br/>
+    		<li class="active">{{ candidate.name }}</li>
+		{% endif %}
+	</ol>
+	
+	<div class="row">
+        <div class="col-md-6">
+            {% if candidate is null %}
+                <h3>
+                    {{ "unknown_candidate"|trans }}
+                </h3>
+    		{% else %}
+                <h3>
+    		        {{ candidate.name }}
+                </h3>
+                {% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
+                	<p>
+                		{% if candidate.dateOfBirth != NULL or candidate.dateOfDeath != NULL %}
+                	        {{ "born_in"|trans({"%date%": candidate.dateOfBirth|localizeddate("long", "none", locale)}) }}
                 	    {% endif %}
-                	    
-            	        {{ "dead_on"|trans({"%date%": candidate.dateOfDeath|localizeddate("long", "none", locale)}) }}
-            	    {% endif %}
-            	</p>
+                		{% if candidate.dateOfDeath != NULL %}
+                    		{% if candidate.dateOfBirth != NULL %}
+                    	        <br/>
+                    	    {% endif %}
+                    	    
+                	        {{ "dead_on"|trans({"%date%": candidate.dateOfDeath|localizeddate("long", "none", locale)}) }}
+                	    {% endif %}
+                	</p>
+                {% endif %}
+                <ul>
+    				{% for election in candidate.elections %}
+    					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+    				{% endfor %}
+                </ul>
             {% endif %}
-            <ul>
-				{% for election in candidate.elections %}
-					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
-				{% endfor %}
-            </ul>
-        {% endif %}
+        </div>
     </div>
 </div>	
 {% endblock %}

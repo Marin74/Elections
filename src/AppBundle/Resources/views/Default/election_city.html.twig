@@ -11,6 +11,7 @@
 {% block body %}
 <div class="container">
 	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
 		<li><a href="{{ url("app_elections") }}">{{ "elections"|trans }}</a></li>
 		{% if election is null %}
 			<li class="active">{{ "unknown_election"|trans }}</li>
@@ -121,22 +122,61 @@
                         		{% endif %}
                             </tbody>
                         </table>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <td>{{ "candidate"|trans }}</td>
-                                    <td>{{ "voices"|trans }}</td>
-                                    <td>{{ "percentage"|trans }}</td>
-                                </tr>
-                        	</thead>
-                            {% if result.scores.count != 0 %}
-                            
+                    	{% if election.type.code == constant("CODE_PRES", election.type) %}
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>{{ "candidate"|trans }}</td>
+                                        <td>{{ "voices"|trans }}</td>
+                                        <td>{{ "percentage"|trans }}</td>
+                                    </tr>
+                            	</thead>
+                                {% if result.scores.count != 0 %}
+                                
+                                    {% for score in result.scores %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}</a>
+                                                <br/>
+                                                <em><a href="{{ url("app_nuance", {"id": score.candidacy.nuance.id, "name": score.candidacy.nuance.urlName}) }}">{{ score.candidacy.nuance.name }}</a></em>
+                                            </td>
+                                            <td>
+                                                {{ score.voices|number_format }}
+                                            </td>
+                                            <td>
+                                            	{% if result.votesCast != null %}
+                                                    {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }} %
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    {% for candidacy in result.round.candidacies %}
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url("app_candidate", {"id": candidacy.candidate.id, "name": candidacy.candidate.urlName}) }}">{{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}</a>
+                                                <br/>
+                                                <em><a href="{{ url("app_nuance", {"id": candidacy.nuance.id, "name": candidacy.nuance.urlName}) }}">{{ candidacy.nuance.name }}</a></em>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                            </table>
+                    	{% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>{{ "nuance"|trans }}</td>
+                                        <td>{{ "voices"|trans }}</td>
+                                        <td>{{ "percentage"|trans }}</td>
+                                    </tr>
+                            	</thead>
                                 {% for score in result.scores %}
                                     <tr>
                                         <td>
-                                            <a href="{{ url("app_candidate", {"id": score.candidacy.candidate.id, "name": score.candidacy.candidate.urlName}) }}">{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}</a>
-                                            <br/>
-                                            <em><a href="{{ url("app_nuance", {"id": score.candidacy.nuance.id, "name": score.candidacy.nuance.urlName}) }}">{{ score.candidacy.nuance.name }}</a></em>
+                                        	<a href="{{ url("app_nuance", {"id": score.nuance.id, "name": score.nuance.urlName}) }}">{{ score.nuance.name }}</a>
                                         </td>
                                         <td>
                                             {{ score.voices|number_format }}
@@ -148,20 +188,8 @@
                                         </td>
                                     </tr>
                                 {% endfor %}
-                            {% else %}
-                                {% for candidacy in result.round.candidacies %}
-                                    <tr>
-                                        <td>
-                                            <a href="{{ url("app_candidate", {"id": candidacy.candidate.id, "name": candidacy.candidate.urlName}) }}">{{ candidacy.candidate.firstname~" "~candidacy.candidate.lastname }}</a>
-                                            <br/>
-                                            <em><a href="{{ url("app_nuance", {"id": candidacy.nuance.id, "name": candidacy.nuance.urlName}) }}">{{ candidacy.nuance.name }}</a></em>
-                                        </td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                {% endfor %}
-                            {% endif %}
-                        </table>
+                            </table>
+                    	{% endif %}
                     {% endif %}
         		</div>
         		
@@ -174,6 +202,44 @@
                 </div>
 			</div>
 	    {% endfor %}
+	    
+	    
+	    {# Display other results #}
+	    {% if city.elections|length > 1 %}
+    	    <hr>
+			<h5>{{ "elections"|trans }}</h5>
+    		<div class="row">
+    			
+    			{% set nbElectionsInCurrentColumn = 0 %}
+    			{% set nbMaxElectionsPerColumn = ((city.elections|length)/3)|round(0, 'ceil') %}
+    			
+				{# TODO Sort #}
+				{% for tempElection in city.elections %}
+					
+        			{% if nbElectionsInCurrentColumn == 0 %}
+        				<div class="col-md-4">
+        			{% endif %}
+        			
+		            {% set nbElectionsInCurrentColumn = nbElectionsInCurrentColumn + 1 %}
+		            
+		            {% if election.id != tempElection.id %}
+    					<a href="{{ url("app_election_city", {"election_id": tempElection.id, "city_id": city.id, "name": tempElection.urlName~"-"~city.urlName}) }}">
+					{% endif %}
+				    {{ tempElection.name }}
+				    {% if election.id != tempElection.id %}
+						</a>
+					{% endif %}
+					
+					<br/>
+					
+        			{% if nbElectionsInCurrentColumn == nbMaxElectionsPerColumn %}
+        				
+        			    {% set nbElectionsInCurrentColumn = 0 %}
+						</div>
+        			{% endif %}
+        		{% endfor %}
+    		</div>
+		{% endif %}
     {% endif %}
 </div>
 {% endblock %}
@@ -218,7 +284,12 @@
                             pointFormat: '<span style="color:{point.color}">{point.name}</span> : <b>{point.y:.2f}%</b> des voix<br/><span style="font-size:11px"><em>{point.nuance}</em></span><br/>'
                         },
                         series: [{
-                            name: '{{ "candidate"|trans }}',
+                        	{% if election.type.code == constant("CODE_PRES", election.type) %}
+                            	name: '{{ "candidate"|trans }}',
+                        	{% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                                name: '{{ "nuance"|trans }}',
+                        	{% endif %}
+                        	
                             colorByPoint: true,
                             data: [
             
@@ -234,10 +305,17 @@
                                     
                                     {% if (score.voices*100/result.votesCast) >= resultMin or (iScores == result.scores|length and smallCandidates == 0) %}
                                         {
+                                        	{% if election.type.code == constant("CODE_PRES", election.type) %}
                                         	color: '{{ score.candidacy.nuance.color }}',
                                             name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname  }}',
-                                            y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
                                             nuance: '{{ score.candidacy.nuance.name }}',
+                                            {% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                                            	color: '{{ score.nuance.color }}',
+                                                name: '{{ score.nuance.name  }}',
+                                                nuance: '{{ score.nuance.name }}',
+                                           	{% endif %}
+                                            
+                                            y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
                                             drilldown: null
                                         },
                                     {% else %}
@@ -256,7 +334,12 @@
             
                                 {% if smallCandidates != 0 %}
                                     {
-                                        name: '{{ "other_candidates"|trans }}',
+                                    	{% if election.type.code == constant("CODE_PRES", election.type) %}
+                                        	name: '{{ "other_candidates"|trans }}',
+                                    	{% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                                        	name: '{{ "other_nuances"|trans }}',
+                                        {% endif %}
+                                        
                                         y: {{ smallCandidates|number_format(2, null, " ") }},
                                         drilldown: 'other'
                                     },
@@ -267,16 +350,28 @@
                             series: [
                                 {% if smallCandidates != 0 %}
                                     {
-                                        name: '{{ "other_candidates"|trans }}',
+                                    	{% if election.type.code == constant("CODE_PRES", election.type) %}
+                                        	name: '{{ "other_candidates"|trans }}',
+                                    	{% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                                        	name: '{{ "other_nuances"|trans }}',
+                                        {% endif %}
+                                            
                                         id: 'other',
                                         data: [
                                             {% for score in result.scores %}
                                                 {% if (score.voices*100/result.votesCast) < resultMin %}
                                                     {
-                                                    	color: '{{ score.candidacy.nuance.color }}',
-                                                        name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
+                                                    	{% if election.type.code == constant("CODE_PRES", election.type) %}
+                                                        	color: '{{ score.candidacy.nuance.color }}',
+                                                            name: '{{ score.candidacy.candidate.firstname~" "~score.candidacy.candidate.lastname }}',
+                                                            nuance: '{{ score.candidacy.nuance.name }}',
+                                                    	{% elseif election.type.code == constant("CODE_LEG", election.type) %}
+                                                        	color: '{{ score.nuance.color }}',
+                                                            name: '{{ score.name }}',
+                                                            nuance: '{{ score.name }}',
+                                                        {% endif %}
+                                                        
                                                         y: {{ (score.voices*100/result.votesCast)|number_format(2, null, " ") }},
-                                                        nuance: '{{ score.candidacy.nuance.name }}',
                                                         drilldown: null
                                                     },
                                                 {% endif %}

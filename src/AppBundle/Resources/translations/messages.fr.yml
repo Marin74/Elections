@@ -99,13 +99,14 @@ contact_hint: Vous aimez ce site ou souhaitez faire des remarques d'amélioratio
 email: Email
 message: Message
 send: Envoyer
-title_app_name: "%app_name% : %title%"
-title_search: "%app_name% - Recherche : %search%"
+title_app_name: "%title% - %app_name%"
+title_search: "Recherche : %search% - %app_name%"
+search_value: "Recherche : %search%"
 meta_description: "Consultez les résultats des élections à l’échelle nationale, d’une ville ou d’un département."
 meta_keywords: "élection, élections, résultat, résultats, politique, présidentielle, présidentielles, législative, législatives, municipale, municipales, départementale, départementales, régionale, régionales, sénatoriale, sénatoriales, histoire, historique, france, république, démocratie"
 born_in: Né(e) le %date%
 dead_on: Décédé(e) le %date%
 first_district: 1ère circonscription
 next_district: "%number%ème circonscription"
-district: Circonscription
+districts: Circonscriptions
 

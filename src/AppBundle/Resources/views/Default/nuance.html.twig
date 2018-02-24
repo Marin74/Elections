@@ -10,21 +10,32 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
-        {% if nuance is null %}
-            <h3>
-                {{ "unknown_nuance"|trans }}
-            </h3>
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		{% if nuance is null %}
+			<li class="active">{{ "unknown_nuance"|trans }}</li>
 		{% else %}
-            <h3>
-		        {{ nuance.name }}
-            </h3>
-            <ul>
-				{% for election in nuance.elections %}
-					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
-				{% endfor %}
-            </ul>
-        {% endif %}
+    		<li class="active">{{ nuance.name }}</li>
+		{% endif %}
+	</ol>
+	
+	<div class="row">
+        <div class="col-md-6">
+            {% if nuance is null %}
+                <h3>
+                    {{ "unknown_nuance"|trans }}
+                </h3>
+    		{% else %}
+                <h3>
+    		        {{ nuance.name }}
+                </h3>
+                <ul>
+    				{% for election in nuance.elections %}
+    					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+    				{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
 </div>	
 {% endblock %}

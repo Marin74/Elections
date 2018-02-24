@@ -11,6 +11,7 @@
 {% block body %}
 <div class="container">
 	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
 		<li><a href="{{ url("app_elections") }}">{{ "elections"|trans }}</a></li>
 		{% if election is null %}
 			<li class="active">{{ "unknown_election"|trans }}</li>
@@ -212,45 +213,54 @@
 			</div>
 	    {% endfor %}
 	    
-	    <hr>
-		<div class="row">
-	        {% if election.type.code == constant("CODE_LEG", election.type) and department.districts|length > 0 %}
-        		<div class="col-md-4">
-        			<h5>{{ "district"|trans }}</h5>
-        			{% for district in department.districts %}
-			            {# TODO Virer les majuscules et accents #}
-			            {% set districtName = "" %}
-                		
-                		{% if district.code == 1 %}
-                	    	{% set districtName = "first_district"|trans %}
-                    	{% else %}
-                    		{% set districtName = "next_district"|trans({"%number%": district.code}) %}
-                    	{% endif %}
-        				<a href="{{ url("app_election_district", {"election_id": election.id, "district_id": district.id, "name": election.urlName~"-"~districtName}) }}">
-        				    {% if district.code == 1 %}
-        				    	{{ "first_district"|trans }}<br/>
-    				    	{% else %}
-    				    		{{ "next_district"|trans({"%number%": district.code}) }}<br/>
-    				    	{% endif %}
-        				</a>
-        			{% endfor %}
-        		</div>
-    		{% endif %}
-    		
-    		{% if department.elections|length > 1 %}
-    			<div class="col-md-4">
-    				<h5>{{ "elections"|trans }}</h5>
-    				{% for tempElection in department.elections %}
-    					{% if election.id != tempElection.id %}
-            				<a href="{{ url("app_election_department", {"election_id": tempElection.id, "department_id": department.id, "name": tempElection.urlName~"-"~department.urlName}) }}">
-            				    {{ tempElection.name }}
-        					</a>
-        					<br/>
-            			{% endif %}
-            		{% endfor %}
-    			</div>
-    		{% endif %}
-		</div>
+	    
+	    {# Display other results #}
+	    {% if (election.type.code == constant("CODE_LEG", election.type) and department.districts|length > 0) or department.elections|length > 1 %}
+    	    <hr>
+    		<div class="row">
+    	        {% if election.type.code == constant("CODE_LEG", election.type) and department.districts|length > 0 %}
+            		<div class="col-md-4">
+            			<h5>{{ "districts"|trans }}</h5>
+            			{% for district in department.districts %}
+    			            {# TODO Virer les majuscules et accents #}
+    			            {% set districtName = "" %}
+                    		
+                    		{% if district.code == 1 %}
+                    	    	{% set districtName = "first_district"|trans %}
+                        	{% else %}
+                        		{% set districtName = "next_district"|trans({"%number%": district.code}) %}
+                        	{% endif %}
+            				<a href="{{ url("app_election_district", {"election_id": election.id, "district_id": district.id, "name": election.urlName~"-"~districtName}) }}">
+            				    {% if district.code == 1 %}
+            				    	{{ "first_district"|trans }}<br/>
+        				    	{% else %}
+        				    		{{ "next_district"|trans({"%number%": district.code}) }}<br/>
+        				    	{% endif %}
+            				</a>
+            			{% endfor %}
+            		</div>
+        		{% endif %}
+        		
+        		{% if department.elections|length > 1 %}
+        			<div class="col-md-4">
+        				<h5>{{ "elections"|trans }}</h5>
+        				{# TODO Sort #}
+        				{% for tempElection in department.elections %}
+        					
+        				    {% if election.id != tempElection.id %}
+                				<a href="{{ url("app_election_department", {"election_id": tempElection.id, "department_id": department.id, "name": tempElection.urlName~"-"~department.urlName}) }}">
+        				    {% endif %}
+        					{{ tempElection.name }}
+        					{% if election.id != tempElection.id %}
+        						</a>
+    						{% endif %}
+    						
+            				<br/>
+                		{% endfor %}
+        			</div>
+        		{% endif %}
+    		</div>
+		{% endif %}
     {% endif %}
 </div>
 {% endblock %}

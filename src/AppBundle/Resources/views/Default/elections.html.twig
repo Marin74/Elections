@@ -6,16 +6,24 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		<li class="active">{{ "elections"|trans }}</li>
+	</ol>
+	
+	<div class="row">
+		
         {% for electionType in electionTypes %}
-            <h3>
-                {{ electionType.name }}
-            </h3>
-            <ul>
-				{% for election in electionType.elections %}
-					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
-				{% endfor %}
-            </ul>
+        	<div class="col-md-4">
+                <h3>
+                    {{ electionType.name }}
+                </h3>
+                <ul>
+    				{% for election in electionType.elections %}
+    					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+    				{% endfor %}
+                </ul>
+            </div>
         {% endfor %}
     </div>
 </div>	

@@ -650,20 +650,30 @@ class City
     
     public function getElections()
     {
-    	$elections = array();
-    	$electionsIds = array();
-    	
-    	foreach($this->getResults() as $result) {
-    		
-    		$election = $result->getRound()->getElection();
-    		
-    		if(!in_array($election->getId(), $electionsIds)) {
-    			$elections[] = $election;
-    			$electionsIds[] = $election->getId();
-    		}
-    	}
-    	
-    	return $elections;
+        $electionsIds = array();
+        $unsortedElections = array();
+        
+        foreach($this->getResults() as $result) {
+            
+            $election = $result->getRound()->getElection();
+            
+            if(!in_array($election->getId(), $electionsIds)) {
+                
+                $electionsIds[] = $election->getId();
+                
+                $unsortedElections[$election->getId().$election->getName()] = $election;
+            }
+        }
+        
+        // Sort
+        arsort($unsortedElections);
+        
+        $elections = array();
+        foreach($unsortedElections as $key => $election) {
+            $elections[] = $election;
+        }
+        
+        return $elections;
     }
 
     public function getDepartment()

@@ -2,6 +2,9 @@
 
 {% block body %}
 <div class="container">
+	
+	<div class="alert alert-info" role="alert"><strong>Bienvenue !</strong> Les résultats des législatives 2017 sont importés progressivement. C'est normal si vous ne voyez pas tout. ;-)</div>
+	
     <h2>{{ "search"|trans }}</h2>
     
     <form method="get" action="{{ url("app_search") }}">
@@ -25,9 +28,11 @@
 		
 	{% endif %}
 </div>
+    
 {% if round is not null %}
 	<div id="mapid" style="height: 500px; margin: 0 auto"></div>
 {% endif %}
+
 {% endblock %}
 
 {% block js %}

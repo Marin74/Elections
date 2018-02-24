@@ -48,6 +48,7 @@ class DefaultController extends Controller
     	$previousElection = null;
     	$nextElection = null;
     	$resultsDepartment = array();
+    	$elections = array();
     	
     	if(!empty($electionId)) {
     		$election = $repoElection->find($electionId);
@@ -101,12 +102,20 @@ class DefaultController extends Controller
 	    		if(count($resultsDepartment) == 0) {
 	    			$resultsDepartment = $election->getRounds()[0]->getResultsDepartment();
 	    		}
+	    		
+	    		$elections = $repoElection->createQueryBuilder("e")
+    	    		->join("e.rounds", "r")
+    	    		->select("e")
+    	    		->orderBy("r.date", "DESC")
+    	    		->getQuery()
+    	    		->getResult();// TODO N'est pas dans l'ordre
     		}
     	}
     	
         return $this->render('AppBundle:Default:election.html.twig', array(
         	'election'			=> $election,
         	'resultsDepartment'	=> $resultsDepartment,
+            'elections'         => $elections,
         	'previousElection'	=> $previousElection,
         	'nextElection'		=> $nextElection
         ));
@@ -114,7 +123,8 @@ class DefaultController extends Controller
     
     public function searchAction(Request $request)
     {
-    	$em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
+        $repoCandidate = $em->getRepository("AppBundle:Candidate");
     	$repoCity = $em->getRepository("AppBundle:City");
     	$repoDepartment = $em->getRepository("AppBundle:Department");
     	$repoElection = $em->getRepository("AppBundle:Election");
@@ -122,6 +132,7 @@ class DefaultController extends Controller
     	$cities = array();
     	$departments = array();
     	$elections = array();
+    	$candidates = array();
     	
     	if(!empty($search)) {
     		
@@ -159,16 +170,33 @@ class DefaultController extends Controller
     		
     		$elections = $query->getQuery()->getResult();
     		
+    		// Candidates
+    		$query = $repoCandidate->createQueryBuilder('c');
+    		$query
+    		->where(
+    		    $query->expr()->orX(
+    		        $query->expr()->like("replace(CONCAT(CONCAT(c.firstname, ' '), c.lastname), '-', ' ')", "replace(:search, '-', ' ')"),
+    		        $query->expr()->like("replace(CONCAT(CONCAT(c.lastname, ' '), c.firstname), '-', ' ')", "replace(:search, '-', ' ')")
+    		    )
+            )
+    		->orderBy('c.lastname', 'ASC')
+    		->setParameter('search', '%'.$search.'%');
+    		
+    		$candidates = $query->getQuery()->getResult();
+    		
 
 
-    		if(count($cities) == 1 && count($departments) == 0 && count($elections) == 0) {
+    		if(count($cities) == 1 && count($departments) == 0 && count($elections) == 0 && count($candidates) == 0) {
     			return $this->redirectToRoute("app_city", array("id" => $cities[0]->getId(), "name" => $cities[0]->getURLName()));
     		}
-    		elseif(count($cities) == 0 && count($departments) == 1 && count($elections) == 0) {
+    		elseif(count($cities) == 0 && count($departments) == 1 && count($elections) == 0 && count($candidates) == 0) {
     			return $this->redirectToRoute("app_department", array("id" => $departments[0]->getId(), "name" => $departments[0]->getURLName()));
     		}
-    		elseif(count($cities) == 0 && count($departments) == 0 && count($elections) == 1) {
+    		elseif(count($cities) == 0 && count($departments) == 0 && count($elections) == 1 && count($candidates) == 0) {
     			return $this->redirectToRoute("app_election", array("id" => $elections[0]->getId(), "name" => $elections[0]->getURLName()));
+    		}
+    		elseif(count($cities) == 0 && count($departments) == 0 && count($elections) == 1 && count($candidates) == 0) {
+    		    return $this->redirectToRoute("app_candidate", array("id" => $candidates[0]->getId(), "name" => $candidates[0]->getURLName()));
     		}
     	}
 		
@@ -176,6 +204,7 @@ class DefaultController extends Controller
     		'cities'		=> $cities,
     		'departments'	=> $departments,
     		'elections'		=> $elections,
+    	    'candidates'    => $candidates,
     		'search'		=> $search
     	));
     }
@@ -510,12 +539,14 @@ class DefaultController extends Controller
         $repoElection = $em->getRepository("AppBundle:Election");
         $repoCandidacy = $em->getRepository("AppBundle:Candidacy");
         $repoResultDistrict = $em->getRepository("AppBundle:ResultDistrict");
+        $repoResultDistrictCity = $em->getRepository("AppBundle:ResultDistrictCity");
         $election = $repoElection->find($request->get("election_id"));
         $district = $repoDistrict->find($request->get("district_id"));
         $previousElection = null;
         $nextElection = null;
         $results = array();
         $candidacies = array();
+        $resultsDistrictCity = array();
         
         if($district != null && $election != null) {
             
@@ -578,6 +609,17 @@ class DefaultController extends Controller
                 ->setParameter("district", $district)
                 ->getQuery()
                 ->getResult();
+                
+                $resultsDistrictCity = $repoResultDistrictCity->createQueryBuilder("rdc")
+                ->select("rdc")
+                ->join("rdc.round", "r")
+                ->join("rdc.districtCity", "dc")
+                ->where("r.election = :election")
+                ->andWhere("dc.district = :district")
+                ->setParameter("election", $election)
+                ->setParameter("district", $district)
+                ->getQuery()
+                ->getResult();
             }
             
         }
@@ -587,6 +629,7 @@ class DefaultController extends Controller
             'election'			=> $election,
             'results'			=> $results,
             'candidacies'       => $candidacies,
+            'resultsDistrictCity'   => $resultsDistrictCity,
             'previousElection'	=> $previousElection,
             'nextElection'		=> $nextElection
         ));

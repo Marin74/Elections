@@ -10,21 +10,33 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
-        {% if city is null %}
-            <h3>
-                {{ "unknown_city"|trans }}
-            </h3>
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		{% if city is null %}
+			<li class="active">{{ "unknown_city"|trans }}</li>
 		{% else %}
-            <h3>
-		        {{ city.fullName }}
-            </h3>
-            <ul>
-				{% for election in city.elections %}
-					<li><a href="{{ url("app_election_city", {"election_id": election.id, "city_id": city.id, "name": election.urlName~"-"~city.urlName}) }}">{{ election.name }}</a></li>
-				{% endfor %}
-            </ul>
-        {% endif %}
+			<li><a href="{{ url("app_department", {"id": city.department.id, "name": city.department.urlName}) }}">{{ city.department.name }}</a></li>
+    		<li class="active">{{ city.fullName }}</li>
+		{% endif %}
+	</ol>
+	
+	<div class="row">
+        <div class="col-md-6">
+            {% if city is null %}
+                <h3>
+                    {{ "unknown_city"|trans }}
+                </h3>
+    		{% else %}
+                <h3>
+    		        {{ city.fullName }}
+                </h3>
+                <ul>
+    				{% for election in city.elections %}
+    					<li><a href="{{ url("app_election_city", {"election_id": election.id, "city_id": city.id, "name": election.urlName~"-"~city.urlName}) }}">{{ election.name }}</a></li>
+    				{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
 </div>	
 {% endblock %}

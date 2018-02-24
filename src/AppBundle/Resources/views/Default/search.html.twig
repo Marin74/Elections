@@ -10,44 +10,71 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
-        <h3>
-            {{ "results"|trans }}
-        </h3> 
-        {% if cities|length == 0 and departments|length == 0 and elections|length == 0 %}
-        	<p>
-        		{{ "no_result_found"|trans }}
-        	</p>
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		{% if search is empty %}
+			<li class="active">{{ "search"|trans }}</li>
         {% else %}
-            
+			<li class="active">{{ "search_value"|trans({"%search%": search}) }}</li>
+        {% endif %}
+	</ol>
+	
+    <h3>
+        {{ "results"|trans }}
+    </h3> 
+    
+    {% if cities|length == 0 and departments|length == 0 and elections|length == 0 and candidates|length == 0 %}
+    	<p>
+    		{{ "no_result_found"|trans }}
+    	</p>
+    {% else %}
+    	<div class="row">
+    		
         	{% if elections|length > 0 %}
-        		<h4>{{ "elections"|trans }}</h4>
-                <ul>
-    				{% for election in elections %}
-    					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
-    				{% endfor %}
-                </ul>
+        		<div class="col-md-4">
+            		<h4>{{ "elections"|trans }}</h4>
+                    <ul>
+        				{% for election in elections %}
+        					<li><a href="{{ url("app_election", {"id": election.id, "name": election.urlName}) }}">{{ election.name }}</a></li>
+        				{% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+        	{% if candidates|length > 0 %}
+        		<div class="col-md-4">
+            		<h4>{{ "candidates"|trans }}</h4>
+                    <ul>
+        				{% for candidate in candidates %}
+        					<li><a href="{{ url("app_candidate", {"id": candidate.id, "name": candidate.urlName}) }}">{{ candidate.name }}</a></li>
+        				{% endfor %}
+                    </ul>
+                </div>
             {% endif %}
             
         	{% if departments|length > 0 %}
-        		<h4>{{ "departments"|trans }}</h4>
-                <ul>
-    				{% for department in departments %}
-    					<li><a href="{{ url("app_department", {"id": department.id, "name": department.urlName}) }}">{{ department.name }}</a></li>
-    				{% endfor %}
-                </ul>
+        		<div class="col-md-4">
+            		<h4>{{ "departments"|trans }}</h4>
+                    <ul>
+        				{% for department in departments %}
+        					<li><a href="{{ url("app_department", {"id": department.id, "name": department.urlName}) }}">{{ department.name }}</a></li>
+        				{% endfor %}
+                    </ul>
+                </div>
             {% endif %}
             
         	{% if cities|length > 0 %}
-        		<h4>{{ "cities"|trans }}</h4>
-                <ul>
-    				{% for city in cities %}
-    					<li><a href="{{ url("app_city", {"id": city.id, "name": city.urlName}) }}">{{ city.name }}{% if city.artmin is not empty %} {{ city.artmin }}{% endif %} ({{ city.dep }})</a></li>
-    				{% endfor %}
-                </ul>
+        		<div class="col-md-4">
+            		<h4>{{ "cities"|trans }}</h4>
+                    <ul>
+        				{% for city in cities %}
+        					<li><a href="{{ url("app_city", {"id": city.id, "name": city.urlName}) }}">{{ city.name }}{% if city.artmin is not empty %} {{ city.artmin }}{% endif %} ({{ city.dep }})</a></li>
+        				{% endfor %}
+                    </ul>
+                </div>
             {% endif %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 </div>	
 {% endblock %}
 {% block css %}

@@ -10,21 +10,32 @@
 
 {% block body %}
 <div class="container">
-    <div class="col-md-6">
-        {% if department is null %}
-            <h3>
-                {{ "unknown_department"|trans }}
-            </h3>
+	<ol class="breadcrumb">
+		<li><a href="{{ url("app_homepage") }}"><span class="glyphicon glyphicon-home"></span></a></li>
+		{% if department is null %}
+			<li class="active">{{ "unknown_department"|trans }}</li>
 		{% else %}
-            <h3>
-		        {{ department.name }}
-            </h3>
-            <ul>
-				{% for election in department.elections %}
-					<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": department.id, "name": election.urlName~"-"~department.urlName}) }}">{{ election.name }}</a></li>
-				{% endfor %}
-            </ul>
-        {% endif %}
+    		<li class="active">{{ department.name }}</li>
+		{% endif %}
+	</ol>
+	
+	<div class="row">
+        <div class="col-md-6">
+            {% if department is null %}
+                <h3>
+                    {{ "unknown_department"|trans }}
+                </h3>
+    		{% else %}
+                <h3>
+    		        {{ department.name }}
+                </h3>
+                <ul>
+    				{% for election in department.elections %}
+    					<li><a href="{{ url("app_election_department", {"election_id": election.id, "department_id": department.id, "name": election.urlName~"-"~department.urlName}) }}">{{ election.name }}</a></li>
+    				{% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
 </div>	
 {% endblock %}
