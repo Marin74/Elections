@@ -1,6 +1,6 @@
 
 @media (min-width: 768px) {
-	/* Because the logo is bigger than the navbar */
+	/* Because the logo is bigger than usual */
 	.navbar-nav > li > a {
 		padding-top: 20px;
 		padding-bottom: 20px;

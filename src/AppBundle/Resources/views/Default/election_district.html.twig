@@ -200,9 +200,7 @@
     			<p>
     				{% for resultDistrictCity in resultsDistrictCity %}
     					{% if loop.index != 1 %} - {% endif %}
-        				<a href="{{ url("app_election_city", {"election_id": election.id, "city_id": resultDistrictCity.districtCity.city.id, "name": election.urlName~"-"~resultDistrictCity.districtCity.city.urlName}) }}">
-        				    {{ resultDistrictCity.districtCity.city.fullName }}
-    				    </a>
+        				<a href="{{ url("app_election_city", {"election_id": election.id, "city_id": resultDistrictCity.districtCity.city.id, "name": election.urlName~"-"~resultDistrictCity.districtCity.city.urlName}) }}">{{ resultDistrictCity.districtCity.city.fullName }}</a>
             		{% endfor %}
         		</p>
 			{% endif %}
