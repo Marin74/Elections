@@ -36,7 +36,7 @@ abstract class Score
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Nuance",inversedBy="scores")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
-    protected $nuance;
+    protected $nuance;// TODO Virer la nuance dans ScoreDistrict et ScoreDistrictCity
 
 
     /**

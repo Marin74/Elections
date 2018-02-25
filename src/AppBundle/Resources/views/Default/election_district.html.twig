@@ -196,17 +196,15 @@
             
             {% if resultsDistrictCity|length > 0 %}
                 <hr>
-    			<div class="row">
-    				<div class="col-md-4">
-        				<h5>{{ "cities"|trans }}</h5>
-        				{% for resultDistrictCity in resultsDistrictCity %}
-        					{% if loop.index != 1 %} - {% endif %}
-            				<a href="{{ url("app_election_city", {"election_id": election.id, "city_id": resultDistrictCity.districtCity.city.id, "name": election.urlName~"-"~resultDistrictCity.districtCity.city.urlName}) }}">
-            				    {{ resultDistrictCity.districtCity.city.name }}
-        				    </a>
-                		{% endfor %}
-        			</div>
-    			</div>
+    			<h5>{{ "cities"|trans }}</h5>
+    			<p>
+    				{% for resultDistrictCity in resultsDistrictCity %}
+    					{% if loop.index != 1 %} - {% endif %}
+        				<a href="{{ url("app_election_city", {"election_id": election.id, "city_id": resultDistrictCity.districtCity.city.id, "name": election.urlName~"-"~resultDistrictCity.districtCity.city.urlName}) }}">
+        				    {{ resultDistrictCity.districtCity.city.fullName }}
+    				    </a>
+            		{% endfor %}
+        		</p>
 			{% endif %}
 	    {% endfor %}
     {% endif %}

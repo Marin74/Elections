@@ -227,7 +227,7 @@ class DefaultController extends Controller
     			foreach($department->getResults() as $result) {
     			
     				if($election == null || $result->getRound()->getDate() > $electionDate) {
-    						
+    					
     					$election = $result->getRound()->getElection();
     					$electionDate = $result->getRound()->getDate();
     				}
@@ -262,7 +262,15 @@ class DefaultController extends Controller
     			$election = null;
     			$electionDate = null;
     			
-    			foreach($city->getResults() as $result) {
+    			$tempResults = $city->getResults();
+    			foreach($city->getDistrictsCities() as $districtCity) {
+    			    
+    			    foreach($districtCity->getResults() as $tempResult) {
+    			        $tempResults[] = $tempResult;
+    			    }
+    			}
+    			
+    			foreach($tempResults as $result) {
     				
     				if($election == null || $result->getRound()->getDate() > $electionDate) {
     					
@@ -274,7 +282,7 @@ class DefaultController extends Controller
     			// TODO Check if the most recent election is a district election
     			// Check if district election (specific case)
     			if($election->getType()->getCode() == ElectionType::CODE_LEG) {
-    			    return $this->electionDistrictCityAction($request);
+    			    return $this->electionDistrictCityAction($request, $city->getId(), $election->getId());
     			}
     			
     			return $this->redirectToRoute("app_election_city", array(
@@ -284,6 +292,8 @@ class DefaultController extends Controller
     				)
     			);
     		}
+    		
+    		
     	}
     	 
     	return $this->render('AppBundle:Default:city.html.twig', array(
@@ -547,7 +557,7 @@ class DefaultController extends Controller
     	));
     }
     
-    public function electionDistrictCityAction(Request $request)
+    public function electionDistrictCityAction(Request $request, $city_id = null, $election_id = null)
     {
         $em = $this->getDoctrine()->getManager();
         $repoCity = $em->getRepository("AppBundle:City");
@@ -555,7 +565,13 @@ class DefaultController extends Controller
         $repoElection = $em->getRepository("AppBundle:Election");
         $repoDepartment = $em->getRepository("AppBundle:Department");
         $repoResultDistrictCity = $em->getRepository("AppBundle:ResultDistrictCity");
-        $election = $repoElection->find($request->get("election_id"));
+        $election = null;
+        if($election_id != null) {
+            $election = $repoElection->find($election_id);
+        }
+        else {
+            $election = $repoElection->find($request->get("election_id"));
+        }
         $previousElection = null;
         $nextElection = null;
         $results = array();
@@ -607,7 +623,12 @@ class DefaultController extends Controller
             }
         }
         else {
-            $city = $repoCity->find($request->get("city_id"));
+            if($city_id != null) {
+                $city = $repoCity->find($city_id);
+            }
+            else {
+                $city = $repoCity->find($request->get("city_id"));
+            }
         }
         
         // Get district

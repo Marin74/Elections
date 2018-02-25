@@ -8,6 +8,8 @@
     {% endif %}
 {% endblock %}
 
+{# TODO Mettre à jour le statut des communes (certaines ont disparu : Gernicourt, Fresne-sur-Loire... #}
+
 {% block body %}
 <div class="container">
 	<ol class="breadcrumb">
@@ -44,7 +46,7 @@
 	{% if city is null %}
 		<h3>{{ "unknown_city"|trans }}</h3>
 	{% elseif election is null %}
-		<h3>{{ city.name }}</h3>
+		<h3>{{ city.fullName }}</h3>
 		<p>{{ "unknown_election"|trans }}</p>
 	{% else %}
 		<h3>{{ "election_city"|trans({"%election%": election.name, "%city%": city.fullName}) }}</h3>
@@ -205,6 +207,7 @@
 	    
 	    
 	    {# Display other results #}
+	    {# TODO Avoir les élections législatives #}
 	    {% if city.elections|length > 1 %}
     	    <hr>
 			<h5>{{ "elections"|trans }}</h5>

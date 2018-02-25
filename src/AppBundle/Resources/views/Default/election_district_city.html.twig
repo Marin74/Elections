@@ -13,9 +13,9 @@
         		{% set districtName = "next_district"|trans({"%number%": district.code}) %}
         	{% endif %}
         	
-            {{ "election_district_city"|trans({"%election%": election.name, "%department%": district.department.name, "%district%": districtName, "%city%": city.name}) }}
+            {{ "election_district_city"|trans({"%election%": election.name, "%department%": district.department.name, "%district%": districtName, "%city%": city.fullName}) }}
         {% else %}
-            {{ "election_city"|trans({"%election%": election.name, "%city%": city.name}) }}
+            {{ "election_city"|trans({"%election%": election.name, "%city%": city.fullName}) }}
         {% endif %}
     {% else %}
 	    {{ parent() }}
@@ -51,7 +51,7 @@
     			<li><a href="{{ url("app_election_district", {"election_id": election.id, "district_id": district.id, "name": election.urlName~"-"~district.department.urlName~"-"~districtName}) }}">{{ districtName }}</a></li>
 			{% endif %}
 			
-			<li class="active">{{ city.name }}</li>
+			<li class="active">{{ city.fullName }}</li>
 		{% endif %}
 	</ol>
 	
@@ -101,7 +101,7 @@
 			{% endfor %}
 		</ul>
 	{% else %}
-		<h3>{{ "election_district_city"|trans({"%election%": election.name, "%department%": district.department.name, "%district%": districtName, "%city%": city.name}) }}</h3>
+		<h3>{{ "election_district_city"|trans({"%election%": election.name, "%department%": district.department.name, "%district%": districtName, "%city%": city.fullName}) }}</h3>
 		
 		{# TODO Afficher les autres circonscriptions de la ville #}
 		

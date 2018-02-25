@@ -81,7 +81,7 @@ unknown_city: Ville inconnue
 election_city: "%election% à %city%"
 election_department: "%election% : %department%"
 election_district: "%election% : %department% - %district%"
-election_district_city: "%election% : %city% (%department% - %district%)"
+election_district_city: "%election% : %city% (%district% - %department%)"
 election_district_city_without_district: "%election% : %city%"
 ids_candidate_candidacy: "ID candidat : %candidate% - ID candidature : %candidacy%"
 no_result_found: Pas de résultat trouvé.
