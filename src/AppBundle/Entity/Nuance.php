@@ -50,6 +50,16 @@ class Nuance
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Candidacy",mappedBy="nuance")
      */
     private $candidacies;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreCountry",mappedBy="nuance")
+     */
+    private $scoresCountry;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\ScoreDepartment",mappedBy="nuance")
+     */
+    private $scoresDepartment;
 
 
     /**
@@ -137,6 +147,16 @@ class Nuance
     public function getCandidacies()
     {
     	return $this->candidacies;
+    }
+    
+    public function getScoresCountry()
+    {
+        return $this->scoresCountry;
+    }
+    
+    public function getScoresDepartment()
+    {
+        return $this->scoresDepartment;
     }
     
     public function getElections()

@@ -31,12 +31,6 @@ abstract class Score
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      */
     protected $candidacy;
-    
-    /**
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Nuance",inversedBy="scores")
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-     */
-    protected $nuance;// TODO Virer la nuance dans ScoreDistrict et ScoreDistrictCity
 
 
     /**
@@ -83,30 +77,6 @@ abstract class Score
     public function getCandidacy()
     {
         return $this->candidacy;
-    }
-    
-    /**
-     * Set nuance
-     *
-     * @param integer $nuance
-     *
-     * @return Score
-     */
-    public function setNuance($nuance)
-    {
-        $this->nuance = $nuance;
-        
-        return $this;
-    }
-    
-    /**
-     * Get nuance
-     *
-     * @return Nuance
-     */
-    public function getNuance()
-    {
-        return $this->nuance;
     }
 }
 

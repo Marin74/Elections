@@ -36,3 +36,5 @@ phpunit.xml.dist
 .project
 
 .settings/
+
+composer.phar

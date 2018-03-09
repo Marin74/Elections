@@ -55,7 +55,6 @@ nuance_added: Nuance ajoutée.
 nuance_updated: Nuance mise à jour.
 code: Code
 color: Couleur
-unknown_candidate: Nuance inconnue
 result_country: Résultat national
 new_candidacy: Nouvelle candidature
 candidate: Candidat(e)
@@ -75,7 +74,6 @@ results: Résultats
 candidate_already_added: Candidat(e) déjà ajouté(e).
 score_already_added: Résultat déjà ajouté.
 various: Divers
-results: Résultats
 no_results: Pas de résultat.
 unknown_city: Ville inconnue
 election_city: "%election% à %city%"

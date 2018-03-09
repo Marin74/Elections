@@ -23,7 +23,6 @@ framework:
         engines: ['twig']
     default_locale:  "%locale%"
     trusted_hosts:   ~
-    trusted_proxies: ~
     session:
         # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
         handler_id:  session.handler.native_file
@@ -85,9 +84,9 @@ fos_user:
     firewall_name: main
     user_class: AppBundle\Entity\User
 # from_email param below: The default email address to use when the bundle send a registration confirmation to the user.
-#    from_email:
-#        address: "%mailer_user%"
-#        sender_name: "%mailer_user%"
+    from_email:
+        address: "%mailer_user%"
+        sender_name: "%mailer_user%"
     
 # Services
 services:
