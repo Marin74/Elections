@@ -15,23 +15,7 @@
 /vendor/
 /web/bundles/
 
-.idea/copyright/profiles_settings.xml
-
-.idea/elections.iml
-
-.idea/encodings.xml
-
-.idea/misc.xml
-
-.idea/modules.xml
-
-.idea/symfony2.xml
-
-.idea/vcs.xml
-
-.idea/workspace.xml
-
-.idea/php.xml
+.idea/
 
 phpunit.xml.dist
 
