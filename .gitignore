@@ -31,6 +31,8 @@
 
 .idea/workspace.xml
 
+.idea/php.xml
+
 phpunit.xml.dist
 
 .project
